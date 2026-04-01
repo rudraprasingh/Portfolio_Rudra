@@ -58,7 +58,6 @@ export default function Cursor() {
 
   return (
     <>
-      <div ref={curRef} id="cur" />
       <div ref={curRRef} id="cur-r" />
     </>
   );

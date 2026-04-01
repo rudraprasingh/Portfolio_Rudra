@@ -924,8 +924,23 @@ body.nav-active #top-vignette {
   opacity: 0; pointer-events: none; transition: opacity 0.5s;
 }
 #ee.active { opacity: 1; pointer-events: auto; }
-.ee-c { text-align: center; }
-.ee-qr { width: 240px; height: 240px; border: 4px solid var(--paper); padding: 10px; background: #fff; margin-bottom: 2rem; }
+.ee-c {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  max-width: min(90vw, 450px);
+}
+.ee-qr {
+  width: 240px;
+  height: 240px;
+  border: 4px solid var(--paper);
+  padding: 10px;
+  background: #fff;
+  margin-bottom: 2rem;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.35);
+}
 .ee-tx { font-family: var(--serif); font-style: italic; font-size: 2.2rem; color: var(--paper); margin-bottom: 1rem; }
 .ee-sub { font-family: var(--mono); font-size: 0.7rem; color: var(--accent); }
 .ee-close {
