@@ -1531,7 +1531,7 @@
   <div id="grain"></div>
 
   <!-- Music Controller -->
-  <audio id="bg-music" src="public/audio/bg-music.mp3" loop></audio>
+  <audio id="bg-music" src="../public/audio/bg-music.mp3" loop></audio>
   <button id="music-toggle" class="music-btn magnetic muted" aria-label="Toggle Music">
     <div class="bar-wrap">
       <div class="bar"></div>
@@ -1721,8 +1721,8 @@
         <div class="work-showcase">
 
           <!-- Project 1 -->
-          <a href="legacy/case-studies/stellar-banking.html" class="work-card rv" id="wr1">
-            <div class="wc-bg"><img src="public/images/fintech.webp" alt=""></div>
+          <a href="case-studies/stellar-banking.html" class="work-card rv" id="wr1">
+            <div class="wc-bg"><img src="../public/images/fintech.webp" alt=""></div>
             <div class="wc-inner">
               <span class="wc-idx">01</span>
               <div>
@@ -1737,7 +1737,7 @@
               </div>
               <div>
                 <div class="wc-media skeleton-bg">
-                  <img src="public/images/fintech.webp" alt="Stellar Banking" class="lqip" loading="lazy" width="1000"
+                  <img src="../public/images/fintech.webp" alt="Stellar Banking" class="lqip" loading="lazy" width="1000"
                     height="600" onload="this.classList.add('loaded')">
                 </div>
                 <div class="wc-meta">
@@ -1752,8 +1752,8 @@
           </a>
 
           <!-- Project 2 -->
-          <a href="legacy/case-studies/nova-os.html" class="work-card rv" id="wr2">
-            <div class="wc-bg"><img src="public/images/dark_os.webp" alt=""></div>
+          <a href="case-studies/nova-os.html" class="work-card rv" id="wr2">
+            <div class="wc-bg"><img src="../public/images/dark_os.webp" alt=""></div>
             <div class="wc-inner">
               <span class="wc-idx">02</span>
               <div>
@@ -2164,12 +2164,13 @@
     }
 
     function loadHeroCanvas() {
-      const TOTAL_FRAMES = 81; // Frames 16-80
-      for (let i = 16; i <= 80; i++) {
+      const start = 16, end = 80;
+      const total = end - start + 1;
+      for (let i = start; i <= end; i++) {
         const img = new Image();
         img.src = `public/sequence/frame_${i.toString().padStart(2, '0')}_delay-0.066s.webp`;
-        img.onload = () => { ok++; tick(TOTAL_FRAMES - 16); };
-        img.onerror = () => { bad++; tick(TOTAL_FRAMES - 16); };
+        img.onload = () => { ok++; tick(total); };
+        img.onerror = () => { bad++; tick(total); };
         imgs.push(img);
       }
     }

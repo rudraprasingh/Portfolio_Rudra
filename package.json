@@ -11,6 +11,8 @@
   "dependencies": {
     "clsx": "^2.1.0",
     "framer-motion": "^11.0.8",
+    "gsap": "^3.12.5",
+    "lenis": "^1.0.42",
     "lucide-react": "^0.360.0",
     "motion": "^11.5.0",
     "next": "14.1.4",

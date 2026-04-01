@@ -16,12 +16,12 @@
   <meta property="og:description"
     content="Rudra Pratap Singh — Creative Developer & Designer building high-performance digital experiences.">
   <meta property="og:url" content="https://rudra.design">
-  <meta property="og:image" content="/images/og_image.webp">
+  <meta property="og:image" content="images/og_image.webp">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Rudra — Creative Developer">
   <meta name="twitter:description" content="Creative Developer building high-performance digital experiences.">
-  <meta name="twitter:image" content="/images/og_image.webp">
+  <meta name="twitter:image" content="images/og_image.webp">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -1768,7 +1768,7 @@
               </div>
               <div>
                 <div class="wc-media skeleton-bg">
-                  <img src="/images/dark_os.webp" alt="Nova OS" class="lqip" loading="lazy" width="1000"
+                  <img src="images/dark_os.webp" alt="Nova OS" class="lqip" loading="lazy" width="1000"
                     height="600" onload="this.classList.add('loaded')">
                 </div>
                 <div class="wc-meta">
@@ -1784,7 +1784,7 @@
 
           <!-- Project 3 -->
           <a href="#" class="work-card rv" id="wr3">
-            <div class="wc-bg"><img src="/images/dark_os.webp" alt=""></div>
+            <div class="wc-bg"><img src="images/dark_os.webp" alt=""></div>
             <div class="wc-inner">
               <span class="wc-idx">03</span>
               <div>
@@ -1799,7 +1799,7 @@
               </div>
               <div>
                 <div class="wc-media skeleton-bg">
-                  <img src="/images/dark_os.webp" alt="Motion Systems" class="lqip" loading="lazy" width="1000"
+                  <img src="images/dark_os.webp" alt="Motion Systems" class="lqip" loading="lazy" width="1000"
                     height="600" onload="this.classList.add('loaded')">
                 </div>
                 <div class="wc-meta">
@@ -1941,7 +1941,7 @@
   <div id="ee">
     <button class="ee-close" onclick="document.getElementById('ee').classList.remove('active')">Close [ESC]</button>
     <div class="ee-c">
-      <img src="/images/qr.webp" alt="Donation QR Code" class="ee-qr">
+      <img src="images/qr.webp" alt="Donation QR Code" class="ee-qr">
       <div class="ee-tx">Wannabe A LEGEND<br>Scan the Qr For the Donation</div>
       <div class="ee-sub">UPI ID: contact.rudrapra@oksbi</div>
     </div>
@@ -2164,12 +2164,13 @@
     }
 
     function loadHeroCanvas() {
-      const TOTAL_FRAMES = 81; // Frames 16-80
-      for (let i = 16; i <= 80; i++) {
+      const start = 16, end = 80;
+      const total = end - start + 1;
+      for (let i = start; i <= end; i++) {
         const img = new Image();
-        img.src = `/sequence/frame_${i.toString().padStart(2, '0')}_delay-0.066s.webp`;
-        img.onload = () => { ok++; tick(TOTAL_FRAMES - 16); };
-        img.onerror = () => { bad++; tick(TOTAL_FRAMES - 16); };
+        img.src = `sequence/frame_${i.toString().padStart(2, '0')}_delay-0.066s.webp`;
+        img.onload = () => { ok++; tick(total); };
+        img.onerror = () => { bad++; tick(total); };
         imgs.push(img);
       }
     }
