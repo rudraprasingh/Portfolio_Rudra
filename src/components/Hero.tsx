@@ -71,22 +71,43 @@ export default function Hero() {
     resize();
 
     const loadFrames = () => {
-      for (let i = 16; i <= 80; i++) {
+      const START_FRAME = 16;
+      const END_FRAME = 80;
+      const totalFrames = END_FRAME - START_FRAME + 1;
+      const onFrameLoaded = (success: boolean, img: HTMLImageElement) => {
+        if (success) framesRef.current.push(img);
+        framesLoaded++;
+
+        const pct = Math.round((framesLoaded / totalFrames) * 100);
+        if (pctRef.current) pctRef.current.textContent = pct.toString();
+        if (fillRef.current) fillRef.current.style.width = pct + "%";
+
+        if (framesLoaded === totalFrames) {
+          setLoaded(true);
+          framesRef.current = images.filter(im => im.complete && im.naturalHeight);
+          animateGate();
+        }
+      };
+
+      for (let i = START_FRAME; i <= END_FRAME; i++) {
         const img = new Image();
         img.src = `/sequence/frame_${i.toString().padStart(2, "0")}_delay-0.066s.webp`;
-        img.onload = () => {
-          framesLoaded++;
-          const pct = Math.round((framesLoaded / (80 - 16 + 1)) * 100);
-          if (pctRef.current) pctRef.current.textContent = pct.toString();
-          if (fillRef.current) fillRef.current.style.width = pct + "%";
-          if (framesLoaded === (80 - 16 + 1)) {
-            setLoaded(true);
-            framesRef.current = images.filter(im => im.complete && im.naturalHeight);
-            animateGate();
-          }
-        };
+        img.onload = () => onFrameLoaded(true, img);
+        img.onerror = () => onFrameLoaded(false, img);
         images.push(img);
       }
+
+      // Fallback: if images are stuck (network issue), finish loader after 15s.
+      setTimeout(() => {
+        if (framesLoaded < totalFrames) {
+          framesLoaded = totalFrames;
+          if (pctRef.current) pctRef.current.textContent = "100";
+          if (fillRef.current) fillRef.current.style.width = "100%";
+          setLoaded(true);
+          framesRef.current = images.filter(im => im.complete && im.naturalHeight);
+          animateGate();
+        }
+      }, 15000);
     };
 
     const animateGate = () => {
@@ -98,10 +119,22 @@ export default function Hero() {
         .to("#explore-group", { opacity: 1, y: -10, duration: 1, ease: "power2.out" }, "-=0.6");
     };
 
+    const fallbackTimer = window.setTimeout(() => {
+      if (framesLoaded < (80 - 16 + 1)) {
+        framesLoaded = 80 - 16 + 1;
+        if (pctRef.current) pctRef.current.textContent = "100";
+        if (fillRef.current) fillRef.current.style.width = "100%";
+        setLoaded(true);
+        framesRef.current = images.filter(im => im.complete && im.naturalHeight);
+        animateGate();
+      }
+    }, 15000);
+
     loadFrames();
 
     return () => {
       window.removeEventListener("resize", resize);
+      window.clearTimeout(fallbackTimer);
       ScrollTrigger.getAll().forEach(t => t.kill());
     };
   }, []);
