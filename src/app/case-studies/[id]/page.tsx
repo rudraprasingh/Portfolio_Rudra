@@ -39,8 +39,56 @@ const projectData: Record<string, any> = {
       { label: "Design Stars (k)", value: 12 },
       { label: "Load Speed (ms)", value: 450 },
     ],
+    next: { id: "ecommerce-experience", title: "E-Commerce Experience" },
+  },
+  "ecommerce-experience": {
+    idx: "04",
+    title: "E-Commerce Experience",
+    category: "Next.js Development",
+    year: "2023",
+    image: "https://images.unsplash.com/photo-1600607688969-a5bfcd64bd40?q=80&w=2070&auto=format&fit=crop",
+    problem: "Generic e-commerce platforms fail to capture the premium nature of luxury goods.",
+    problemDesc: "This project focused on creating a headless e-commerce experience using Shopify's Storefront API and Next.js, featuring high-fidelity 3D product visualizations.",
+    result: "The platform saw a 35% increase in conversion rates for the 3D-configurable items compared to static images.",
+    metrics: [
+      { label: "Conversion Lift (%)", value: 35 },
+      { label: "Engagement Time (min)", value: 4.2 },
+      { label: "Mobile Performance (pts)", value: 98 },
+    ],
+    next: { id: "ai-chat", title: "AI Chat Interface" },
+  },
+  "ai-chat": {
+    idx: "05",
+    title: "AI Chat Interface",
+    category: "AI / UX Design",
+    year: "2024",
+    image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1965&auto=format&fit=crop",
+    problem: "Most AI interfaces are cluttered and clinical, making them feel uninviting for creative work.",
+    problemDesc: "We designed a minimal, distraction-free writing environment that treats the AI as a silent collaborator rather than a dominant chatbot.",
+    result: "Users reported a 50% decrease in 'creative block' episodes when using the streamlined streaming interface.",
+    metrics: [
+      { label: "Creative Flow (%)", value: 50 },
+      { label: "Response Time (ms)", value: 120 },
+      { label: "User Satisfaction (pts)", value: 9.2 },
+    ],
+    next: { id: "saas-marketing", title: "SaaS Marketing Site" },
+  },
+  "saas-marketing": {
+    idx: "06",
+    title: "SaaS Marketing Site",
+    category: "Creative Dev",
+    year: "2024",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop",
+    problem: "B2B SaaS sites often suffer from 'feature-list fatigue', losing potential leads before they understand the value prop.",
+    problemDesc: "Using GSAP scrollytelling techniques, we transformed the product features into an immersive narrative journey.",
+    result: "Demo requests increased by 65% within the first month of the new site launch.",
+    metrics: [
+      { label: "Lead Gen Increase (%)", value: 65 },
+      { label: "Page Scroll Depth (%)", value: 85 },
+      { label: "Bounce Rate Reduction (%)", value: 22 },
+    ],
     next: { id: "stellar-banking", title: "Stellar Banking" },
-  }
+  },
 };
 
 export default function CaseStudyPage() {

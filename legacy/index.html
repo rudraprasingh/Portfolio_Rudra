@@ -90,38 +90,57 @@
     #cur,
     #cur-r {
       position: fixed;
-      border-radius: 50%;
       pointer-events: none;
       z-index: 9000;
-      transform: translate(-50%, -50%);
       top: 0;
-      left: 0
+      left: 0;
+      will-change: transform;
     }
 
-    #cur {
-      width: 5px;
-      height: 5px;
-      background: var(--paper)
+    .cur-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
     }
 
-    #cur-r {
-      width: 34px;
-      height: 34px;
-      border: 1px solid rgba(233, 229, 222, .22);
-      transition: width .5s, height .5s, border-color .5s, background .5s
+    #cur .cur-inner { background: var(--paper); }
+    #cur-r .cur-inner { border: 1px solid rgba(233, 229, 222, .22); }
+
+    #cur { width: 5px; height: 5px; }
+    #cur-r { width: 34px; height: 34px; }
+
+    body.c-hidden .cur-inner {
+      transform: scale(0) !important;
+      opacity: 0 !important;
+    }
+
+    body.c-scrolling #cur-r {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    body.c-scrolling #cur-r .cur-inner {
+      background: var(--paper);
+      border-color: var(--paper);
+      opacity: 0.15 !important;
+    }
+    body.c-scrolling #cur {
+      opacity: 0;
     }
 
     body.c-hover #cur-r {
       width: 48px;
       height: 48px;
-      border-color: rgba(233, 229, 222, .5)
     }
 
     body.c-link #cur-r {
       width: 64px;
       height: 64px;
+    }
+    body.c-link #cur-r .cur-inner {
       border-color: var(--accent);
-      background: rgba(184, 168, 152, 0.1)
+      background: rgba(184, 168, 152, 0.1);
     }
 
     body.c-view #cur-r,
@@ -129,8 +148,12 @@
     body.c-explore #cur-r {
       width: 72px;
       height: 72px;
+    }
+    body.c-view #cur-r .cur-inner,
+    body.c-drag #cur-r .cur-inner,
+    body.c-explore #cur-r .cur-inner {
       border-color: var(--paper);
-      background: var(--paper)
+      background: var(--paper);
     }
 
     body.c-view #cur-r::after,
@@ -147,6 +170,25 @@
       letter-spacing: 0.1em;
       text-transform: uppercase;
       font-weight: 500;
+    }
+
+    /* ── Top Blur Vignette ── */
+    #top-vignette {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 280px;
+      z-index: 490;
+      pointer-events: none;
+      background: linear-gradient(to bottom, rgba(6, 6, 6, 1) 0%, rgba(6, 6, 6, 0.9) 20%, rgba(6, 6, 6, 0) 100%);
+      opacity: 0;
+      transition: opacity 1s ease, backdrop-filter 1s ease;
+    }
+
+    body.nav-active #top-vignette {
+      opacity: 1;
+      backdrop-filter: blur(12px);
     }
 
 
@@ -1476,17 +1518,20 @@
     .music-btn:not(.muted) .bar:nth-child(2) { animation-delay: 0.2s; }
     .music-btn:not(.muted) .bar:nth-child(3) { animation-delay: 0.4s; }
     @keyframes bar-wave { 0%, 100% { height: 4px; } 50% { height: 12px; } }
+    .ct-serif { font-family: var(--serif); font-style: italic; }
+    .ct-outline { -webkit-text-stroke: 1.5px var(--paper); color: transparent; transition: color .4s, -webkit-text-stroke .4s; }
+    .ct-outline:hover { color: var(--paper); -webkit-text-stroke: 1.5px transparent; }
   </style>
 </head>
 
 <body class="is-loading">
   <div id="top-vignette"></div>
-  <div id="cur"></div>
-  <div id="cur-r"></div>
+  <div id="cur"><div class="cur-inner"></div></div>
+  <div id="cur-r"><div class="cur-inner"></div></div>
   <div id="grain"></div>
 
   <!-- Music Controller -->
-  <audio id="bg-music" src="public/audio/bg-music.mp3" loop></audio>
+  <audio id="bg-music" src="../public/audio/bg-music.mp3" loop></audio>
   <button id="music-toggle" class="music-btn magnetic muted" aria-label="Toggle Music">
     <div class="bar-wrap">
       <div class="bar"></div>
@@ -1677,7 +1722,7 @@
 
           <!-- Project 1 -->
           <a href="case-studies/stellar-banking.html" class="work-card rv" id="wr1">
-            <div class="wc-bg"><img src="public/images/fintech.webp" alt=""></div>
+            <div class="wc-bg"><img src="../public/images/fintech.webp" alt=""></div>
             <div class="wc-inner">
               <span class="wc-idx">01</span>
               <div>
@@ -1692,7 +1737,7 @@
               </div>
               <div>
                 <div class="wc-media skeleton-bg">
-                  <img src="public/images/fintech.webp" alt="Stellar Banking" class="lqip" loading="lazy" width="1000"
+                  <img src="../public/images/fintech.webp" alt="Stellar Banking" class="lqip" loading="lazy" width="1000"
                     height="600" onload="this.classList.add('loaded')">
                 </div>
                 <div class="wc-meta">
@@ -1708,7 +1753,7 @@
 
           <!-- Project 2 -->
           <a href="case-studies/nova-os.html" class="work-card rv" id="wr2">
-            <div class="wc-bg"><img src="public/images/dark_os.webp" alt=""></div>
+            <div class="wc-bg"><img src="../public/images/dark_os.webp" alt=""></div>
             <div class="wc-inner">
               <span class="wc-idx">02</span>
               <div>
@@ -1723,7 +1768,7 @@
               </div>
               <div>
                 <div class="wc-media skeleton-bg">
-                  <img src="public/images/dark_os.webp" alt="Nova OS" class="lqip" loading="lazy" width="1000"
+                  <img src="../public/images/dark_os.webp" alt="Nova OS" class="lqip" loading="lazy" width="1000"
                     height="600" onload="this.classList.add('loaded')">
                 </div>
                 <div class="wc-meta">
@@ -1739,7 +1784,7 @@
 
           <!-- Project 3 -->
           <a href="#" class="work-card rv" id="wr3">
-            <div class="wc-bg"><img src="public/images/dark_os.webp" alt=""></div>
+            <div class="wc-bg"><img src="../public/images/dark_os.webp" alt=""></div>
             <div class="wc-inner">
               <span class="wc-idx">03</span>
               <div>
@@ -1754,7 +1799,7 @@
               </div>
               <div>
                 <div class="wc-media skeleton-bg">
-                  <img src="public/images/dark_os.webp" alt="Motion Systems" class="lqip" loading="lazy" width="1000"
+                  <img src="../public/images/dark_os.webp" alt="Motion Systems" class="lqip" loading="lazy" width="1000"
                     height="600" onload="this.classList.add('loaded')">
                 </div>
                 <div class="wc-meta">
@@ -1834,13 +1879,13 @@
           </div>
 
           <h2 class="ct-big rv">
-            <span class="ct-kicker">LET'S CREATE</span><br>
-            <span class="ct-kicker">SOMETHING</span><br>
-            <span class="ct-main">REMARKABLE.</span>
+            <span style="font-family: var(--sans); font-weight: 800; font-size: clamp(1.25rem, 4vw, 3rem); letter-spacing: 0.05em; line-height: 1; display: block;">LET'S CREATE</span>
+            <span class="ct-serif" style="font-size: clamp(3rem, 10vw, 8rem); display: block; line-height: 0.8; margin: 0.1em 0; font-family: var(--serif); font-style: italic;">something</span>
+            <span class="ct-outline" style="display: block; line-height: 0.9; -webkit-text-stroke: 1.5px var(--paper); color: transparent;">REMARKABLE.</span>
           </h2>
 
           <div class="ct-btns rv" id="ct-btns">
-            <a href="#" class="btn-p magnetic">
+            <a href="https://wa.me/919343438096" target="_blank" rel="noopener noreferrer" class="btn-p magnetic">
               Send Message
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <path d="M7 17L17 7M17 7H7M17 7v10" />
@@ -1866,7 +1911,7 @@
                   d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
               </svg>
             </a>
-            <a href="https://github.com/Rudrapra0" target="_blank" rel="noopener" aria-label="GitHub">
+            <a href="https://github.com/rudraprasingh" target="_blank" rel="noopener" aria-label="GitHub">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
                 <path
                   d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
@@ -1896,7 +1941,7 @@
   <div id="ee">
     <button class="ee-close" onclick="document.getElementById('ee').classList.remove('active')">Close [ESC]</button>
     <div class="ee-c">
-      <img src="public/images/qr.webp" alt="Donation QR Code" class="ee-qr">
+      <img src="../public/images/qr.webp" alt="Donation QR Code" class="ee-qr">
       <div class="ee-tx">Wannabe A LEGEND<br>Scan the Qr For the Donation</div>
       <div class="ee-sub">UPI ID: contact.rudrapra@oksbi</div>
     </div>
@@ -1923,28 +1968,59 @@
     const cur = document.getElementById('cur');
     const curR = document.getElementById('cur-r');
     let mx = 0, my = 0, rx = 0, ry = 0;
-    window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    let hideTimer;
+    const idleTime = 800;
+
+    function showCursor() {
+      document.body.classList.remove('c-hidden');
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => {
+        document.body.classList.add('c-hidden');
+        document.body.classList.remove('c-scrolling');
+      }, idleTime);
+    }
+
+    window.addEventListener('mousemove', e => { 
+      mx = e.clientX; my = e.clientY; 
+      document.body.classList.remove('c-scrolling');
+      showCursor();
+    });
+
+    window.addEventListener('scroll', () => {
+      document.body.classList.add('c-scrolling');
+      showCursor();
+    });
+
+    document.addEventListener('mouseleave', () => document.body.classList.add('c-hidden'));
+    document.addEventListener('mouseenter', () => document.body.classList.remove('c-hidden'));
 
     function updateCursor(e) {
       const hoverable = e.target.closest('a, button, .work-card, .hero-mq');
+      let nextState = '';
+      let nextText = '';
+
       if (hoverable) {
         if (hoverable.classList.contains('work-card')) {
-          document.body.className = 'c-view';
-          curR.setAttribute('data-cur-text', 'view');
+          nextState = 'c-view';
+          nextText = 'view';
         } else if (hoverable.classList.contains('hero-mq')) {
-          document.body.className = 'c-drag';
-          curR.setAttribute('data-cur-text', 'scrl');
+          nextState = 'c-drag';
+          nextText = 'scrl';
         } else {
-          document.body.className = 'c-link';
+          nextState = 'c-link';
         }
-      } else {
-        document.body.className = '';
+      }
+
+      if (!document.body.classList.contains(nextState)) {
+        document.body.classList.remove('c-view', 'c-drag', 'c-link');
+        if (nextState) document.body.classList.add(nextState);
+        if (nextText) curR.setAttribute('data-cur-text', nextText);
       }
     }
-    window.addEventListener('mouseover', updateCursor);
+    window.addEventListener('mouseover', updateCursor, { passive: true });
 
     (function loop() {
-      const lerp = 0.1;
+      const lerp = 0.15;
       rx += (mx - rx) * lerp; ry += (my - ry) * lerp;
       cur.style.transform = `translate3d(${mx}px, ${my}px, 0) translate(-50%,-50%)`;
       curR.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%,-50%)`;
@@ -2001,6 +2077,14 @@
 
     // ── Canvas ──
     gsap.registerPlugin(ScrollTrigger);
+
+    ScrollTrigger.create({
+      trigger: "#about",
+      start: "top 80px",
+      onEnter: () => document.body.classList.add('nav-active'),
+      onLeaveBack: () => document.body.classList.remove('nav-active'),
+    });
+
     const canvas = document.getElementById('hero-canvas');
     const ctx = canvas.getContext('2d');
     let FRAMES = 88, ok = 0, bad = 0;
@@ -2083,7 +2167,7 @@
       const TOTAL_FRAMES = 81; // Frames 16-80
       for (let i = 16; i <= 80; i++) {
         const img = new Image();
-        img.src = `./public/sequence/frame_${i.toString().padStart(2, '0')}_delay-0.066s.webp`;
+        img.src = `../public/sequence/frame_${i.toString().padStart(2, '0')}_delay-0.066s.webp`;
         img.onload = () => { ok++; tick(TOTAL_FRAMES - 16); };
         img.onerror = () => { bad++; tick(TOTAL_FRAMES - 16); };
         imgs.push(img);

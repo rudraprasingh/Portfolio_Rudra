@@ -36,6 +36,36 @@ const projects = [
     image: "/images/dark_os.webp",
     year: "2023",
     link: "#",
+  },
+  {
+    id: "ecommerce-experience",
+    idx: "04",
+    title: "E-Commerce Experience",
+    desc: "A headless CMS driven e-commerce platform with cinematic 3D product configurator integrations.",
+    tags: ["Next.js", "Shopify API", "Three.js"],
+    image: "https://images.unsplash.com/photo-1600607688969-a5bfcd64bd40?q=80&w=2070&auto=format&fit=crop",
+    year: "2023",
+    link: "/case-studies/ecommerce-experience",
+  },
+  {
+    id: "ai-chat",
+    idx: "05",
+    title: "AI Chat Interface",
+    desc: "A generative AI writing assistant featuring instantaneous streaming responses and sleek minimal design.",
+    tags: ["OpenAI", "WebSockets", "Framer Motion"],
+    image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1965&auto=format&fit=crop",
+    year: "2024",
+    link: "/case-studies/ai-chat",
+  },
+  {
+    id: "saas-marketing",
+    idx: "06",
+    title: "SaaS Marketing Site",
+    desc: "Conversion-optimized landing pages with scrollytelling capabilities for a modern B2B product.",
+    tags: ["React", "GSAP", "Prismic CMS"],
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop",
+    year: "2024",
+    link: "/case-studies/saas-marketing",
   }
 ];
 

@@ -46,21 +46,23 @@ export default function Experience() {
                 <span className="exp-date">2022 — Present</span>
               </div>
               <ul className="exp-pts">
-                <li>Led teams building award-winning web experiences and immersive interactions.</li>
-                <li>Elevated core web vitals via custom GSAP pipelines and canvas rendering.</li>
+                <li>Led a team of 4 frontend developers to build award-winning 3D web experiences.</li>
+                <li>Improved core web vitals by 40% using Next.js 14 and intelligent code splitting.</li>
+                <li>Architected a custom design system that scaled across 12 multinational clients.</li>
               </ul>
             </div>
             <div className="exp-item rv">
               <div className="exp-head">
                 <div>
                   <div className="exp-role">Frontend Engineer</div>
-                  <div className="exp-co">TechNova</div>
+                  <div className="exp-co">TechNova Solutions</div>
                 </div>
                 <span className="exp-date">2018 — 2021</span>
               </div>
               <ul className="exp-pts">
-                <li>Spearheaded scrollytelling features, 2D animations, and dynamic states.</li>
-                <li>Built modular component systems adopted across the entire framework team.</li>
+                <li>Spearheaded scrollytelling features, 2D animations, and dynamic states using Framer Motion.</li>
+                <li>Migrated legacy monolithic application to a decoupled React & Node.js stack.</li>
+                <li>Mentored junior developers and conducted weekly pair-programming sessions.</li>
               </ul>
             </div>
           </div>

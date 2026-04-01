@@ -38,8 +38,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${cormorantGaramond.variable} ${dmMono.variable}`}>
         <div id="top-vignette"></div>
-        <div id="cur"></div>
-        <div id="cur-r"></div>
+        <div id="cur"><div className="cur-inner"></div></div>
+        <div id="cur-r"><div className="cur-inner"></div></div>
         <div id="grain"></div>
         {children}
       </body>
