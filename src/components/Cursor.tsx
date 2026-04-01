@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
 export default function Cursor() {
-  const curRef = useRef<HTMLDivElement>(null);
   const curRRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -41,7 +40,6 @@ export default function Cursor() {
       rx += (mx - rx) * lerp;
       ry += (my - ry) * lerp;
       
-      if (curRef.current) curRef.current.style.transform = `translate3d(${mx}px, ${my}px, 0) translate(-50%,-50%)`;
       if (curRRef.current) curRRef.current.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%,-50%)`;
       
       requestAnimationFrame(loop);
