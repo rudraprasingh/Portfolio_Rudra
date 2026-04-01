@@ -8,9 +8,6 @@
   --dim: rgba(233, 229, 222, 0.28);
   --rule: rgba(233, 229, 222, 0.08);
   --accent: #b8a898;
-  --serif: 'Cormorant Garamond', Georgia, serif;
-  --mono: 'DM Mono', monospace;
-  --sans: 'Inter', system-ui, sans-serif;
 }
 
 *,

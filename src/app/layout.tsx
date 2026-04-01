@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import { Inter, Cormorant_Garamond, DM_Mono } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], weight: ["300", "400", "500"], variable: "--sans" });
+const inter = Inter({ subsets: ["latin"], weight: ["300", "400", "500"], variable: "--font-inter" });
 const cormorantGaramond = Cormorant_Garamond({
   subsets: ["latin"],
   weight: ["300", "400", "600"],
   style: ["normal", "italic"],
-  variable: "--serif",
+  variable: "--font-serif",
 });
-const dmMono = DM_Mono({ subsets: ["latin"], weight: ["300", "400", "500"], variable: "--mono" });
+const dmMono = DM_Mono({ subsets: ["latin"], weight: ["300", "400", "500"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
   title: "Rudra — Creative Developer",

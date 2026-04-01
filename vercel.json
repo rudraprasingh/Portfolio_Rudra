@@ -1,7 +1,8 @@
 {
+  "version": 2,
   "headers": [
     {
-      "source": "/public/images/(.*)",
+      "source": "/images/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -10,7 +11,7 @@
       ]
     },
     {
-      "source": "/public/audio/(.*)",
+      "source": "/audio/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -19,7 +20,7 @@
       ]
     },
     {
-      "source": "/public/sequence/(.*)",
+      "source": "/sequence/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
