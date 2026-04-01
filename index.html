@@ -62,10 +62,21 @@
       font-weight: 300;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
+      cursor: none;
     }
 
     body.is-loading {
       overflow: hidden !important;
+    }
+
+    a,
+    button,
+    [role=button],
+    input,
+    select,
+    textarea,
+    label {
+      cursor: none !important
     }
 
     a:focus-visible,
@@ -73,6 +84,92 @@
     [role=button]:focus-visible {
       outline: 2px solid var(--accent);
       outline-offset: 4px;
+    }
+
+    /* ── Cursor ── */
+    #cur,
+    #cur-r {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9000;
+      top: 0;
+      left: 0;
+      will-change: transform;
+    }
+
+    .cur-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+    }
+
+    #cur .cur-inner { background: var(--paper); }
+    #cur-r .cur-inner { border: 1px solid rgba(233, 229, 222, .22); }
+
+    #cur { width: 5px; height: 5px; }
+    #cur-r { width: 34px; height: 34px; }
+
+    body.c-hidden .cur-inner {
+      transform: scale(0) !important;
+      opacity: 0 !important;
+    }
+
+    body.c-scrolling #cur-r {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    body.c-scrolling #cur-r .cur-inner {
+      background: var(--paper);
+      border-color: var(--paper);
+      opacity: 0.15 !important;
+    }
+    body.c-scrolling #cur {
+      opacity: 0;
+    }
+
+    body.c-hover #cur-r {
+      width: 48px;
+      height: 48px;
+    }
+
+    body.c-link #cur-r {
+      width: 64px;
+      height: 64px;
+    }
+    body.c-link #cur-r .cur-inner {
+      border-color: var(--accent);
+      background: rgba(184, 168, 152, 0.1);
+    }
+
+    body.c-view #cur-r,
+    body.c-drag #cur-r,
+    body.c-explore #cur-r {
+      width: 72px;
+      height: 72px;
+    }
+    body.c-view #cur-r .cur-inner,
+    body.c-drag #cur-r .cur-inner,
+    body.c-explore #cur-r .cur-inner {
+      border-color: var(--paper);
+      background: var(--paper);
+    }
+
+    body.c-view #cur-r::after,
+    body.c-drag #cur-r::after,
+    body.c-explore #cur-r::after {
+      content: attr(data-cur-text);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 500;
     }
 
     /* ── Top Blur Vignette ── */
@@ -1429,6 +1526,8 @@
 
 <body class="is-loading">
   <div id="top-vignette"></div>
+  <div id="cur"><div class="cur-inner"></div></div>
+  <div id="cur-r"><div class="cur-inner"></div></div>
   <div id="grain"></div>
 
   <!-- Music Controller -->
@@ -1864,6 +1963,69 @@
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add(t => lenis.raf(t * 1000));
     gsap.ticker.lagSmoothing(0);
+
+    // ── Cursor ──
+    const cur = document.getElementById('cur');
+    const curR = document.getElementById('cur-r');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    let hideTimer;
+    const idleTime = 800;
+
+    function showCursor() {
+      document.body.classList.remove('c-hidden');
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => {
+        document.body.classList.add('c-hidden');
+        document.body.classList.remove('c-scrolling');
+      }, idleTime);
+    }
+
+    window.addEventListener('mousemove', e => { 
+      mx = e.clientX; my = e.clientY; 
+      document.body.classList.remove('c-scrolling');
+      showCursor();
+    });
+
+    window.addEventListener('scroll', () => {
+      document.body.classList.add('c-scrolling');
+      showCursor();
+    });
+
+    document.addEventListener('mouseleave', () => document.body.classList.add('c-hidden'));
+    document.addEventListener('mouseenter', () => document.body.classList.remove('c-hidden'));
+
+    function updateCursor(e) {
+      const hoverable = e.target.closest('a, button, .work-card, .hero-mq');
+      let nextState = '';
+      let nextText = '';
+
+      if (hoverable) {
+        if (hoverable.classList.contains('work-card')) {
+          nextState = 'c-view';
+          nextText = 'view';
+        } else if (hoverable.classList.contains('hero-mq')) {
+          nextState = 'c-drag';
+          nextText = 'scrl';
+        } else {
+          nextState = 'c-link';
+        }
+      }
+
+      if (!document.body.classList.contains(nextState)) {
+        document.body.classList.remove('c-view', 'c-drag', 'c-link');
+        if (nextState) document.body.classList.add(nextState);
+        if (nextText) curR.setAttribute('data-cur-text', nextText);
+      }
+    }
+    window.addEventListener('mouseover', updateCursor, { passive: true });
+
+    (function loop() {
+      const lerp = 0.15;
+      rx += (mx - rx) * lerp; ry += (my - ry) * lerp;
+      cur.style.transform = `translate3d(${mx}px, ${my}px, 0) translate(-50%,-50%)`;
+      curR.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%,-50%)`;
+      requestAnimationFrame(loop);
+    })();
 
 
     // ── Konami Code ──
