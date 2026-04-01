@@ -241,17 +241,28 @@ body.nav-active #nav a {
   top: 0;
   left: 0;
   right: 0;
-  height: 280px;
+  height: 180px;
   z-index: 490;
   pointer-events: none;
-  background: linear-gradient(to bottom, rgba(6, 6, 6, 1) 0%, rgba(6, 6, 6, 0.9) 20%, rgba(6, 6, 6, 0) 100%);
-  opacity: 0;
-  transition: opacity 1s ease, backdrop-filter 1s ease;
+  backdrop-filter: blur(0px);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
+  transition: backdrop-filter 0.8s ease;
 }
 
 body.nav-active #top-vignette {
-  opacity: 1;
   backdrop-filter: blur(12px);
+}
+
+/* ── Split Text Utility ── */
+.split-parent {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+}
+
+.split-child {
+  display: inline-block;
 }
 
 /* ── Hero ── */

@@ -65,8 +65,8 @@ export default function Contact() {
 
           <h2 className="ct-big rv">
             <span style={{ fontFamily: 'var(--sans)', fontWeight: 800, fontSize: 'clamp(1.25rem, 4vw, 3rem)', letterSpacing: '0.05em', lineHeight: 1, display: 'block' }}>LET'S CREATE</span>
-            <span className="ct-serif" style={{ fontSize: 'clamp(3rem, 10vw, 8rem)', display: 'block', lineHeight: 0.8, margin: '0.1em 0' }}>something</span>
-            <span className="ct-outline" style={{ display: 'block', lineHeight: 0.9 }}>REMARKABLE.</span>
+            <span className="ct-serif" style={{ fontSize: 'clamp(3rem, 10vw, 8rem)', display: 'block', lineHeight: 0.8, margin: '0.1em 0', fontFamily: 'var(--serif)', fontStyle: 'italic' }}>something</span>
+            <span className="ct-outline" style={{ display: 'block', lineHeight: 0.9, WebkitTextStroke: '1.5px var(--paper)', color: 'transparent' }}>REMARKABLE.</span>
           </h2>
 
           <div className="ct-btns rv" id="ct-btns">
@@ -96,6 +96,18 @@ export default function Contact() {
             <a href="https://github.com/rudraprasingh" target="_blank" rel="noopener" aria-label="GitHub">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+              </svg>
+            </a>
+            <a href="https://www.instagram.com/rudrapra.singh/" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                <circle cx="12" cy="12" r="4" />
+                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+              </svg>
+            </a>
+            <a href="https://pin.it/4o09uwwjz" target="_blank" rel="noopener" aria-label="Pinterest">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.966 1.406-5.966s-.359-.72-.359-1.781c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.261 7.929-7.261 4.162 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146 1.124.347 2.317.535 3.554.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z" />
               </svg>
             </a>
           </div>

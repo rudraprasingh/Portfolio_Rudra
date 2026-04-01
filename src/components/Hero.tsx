@@ -15,14 +15,60 @@ export default function Hero() {
   const framesRef = useRef<HTMLImageElement[]>([]);
   const seqRef = useRef({ f: 0 });
 
+  function splitText(el: HTMLElement) {
+    const words: HTMLElement[] = [];
+    const nodes = Array.from(el.childNodes);
+    nodes.forEach(node => {
+      if (node.nodeType === 3) { // Text node
+        const tex = node.textContent?.trim();
+        if (!tex) return;
+        const ws = tex.split(/\s+/);
+        const spanWrapper = document.createElement('span');
+        spanWrapper.innerHTML = ws.map(w => `<span class="split-parent"><span class="split-child">${w}</span></span>`).join(' ');
+        Array.from(spanWrapper.childNodes).forEach(s => {
+          const child = (s as HTMLElement).querySelector?.('.split-child');
+          if (child) words.push(child as HTMLElement);
+          el.insertBefore(s, node);
+        });
+        el.removeChild(node);
+      } else if (node.nodeType === 1 && (node as HTMLElement).tagName !== 'BR') { // Element node
+        words.push(...splitText(node as HTMLElement));
+      }
+    });
+    return words;
+  }
+
+  function scrambleEffect(el: HTMLElement, duration = 1.6) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ/*-+_&^%$#@!';
+    const original = el.textContent || "";
+    let frame = 0;
+    const maxFrames = Math.floor(duration * 60);
+
+    function update() {
+      if (frame >= maxFrames) {
+        el.textContent = original;
+        return;
+      }
+      const pct = frame / maxFrames;
+      const revealedLength = Math.floor(pct * original.length);
+      let str = original.slice(0, revealedLength);
+      for (let i = revealedLength; i < original.length; i++) {
+        str += chars[Math.floor(Math.random() * chars.length)];
+      }
+      el.textContent = str;
+      frame++;
+      requestAnimationFrame(update);
+    }
+    update();
+  }
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let framesLoaded = 0;
-    const TOTAL_FRAMES = 81; // Frames 16-80 (65 frames total)
+    const TOTAL_FRAMES = 65; // Frames 16-80
     const images: HTMLImageElement[] = [];
 
     const draw = (i: number) => {
@@ -81,7 +127,6 @@ export default function Hero() {
         const handleComplete = () => {
           processedFrames++;
           if (img.complete && img.naturalHeight) {
-            framesLoaded++;
             images[i - 16] = img; // Keep order
           }
           
@@ -97,7 +142,7 @@ export default function Hero() {
         };
 
         img.onload = handleComplete;
-        img.onerror = handleComplete; // Count errors too so we don't get stuck
+        img.onerror = handleComplete;
       });
     };
 
@@ -127,9 +172,14 @@ export default function Hero() {
       onComplete: () => {
         if (loaderRef.current) loaderRef.current.style.display = "none";
         document.body.classList.remove("is-loading");
+        document.body.classList.add("hero-booted");
         (window as any).lenis?.start();
         gsap.to(["#bl", "#nav"], { opacity: 1, pointerEvents: "auto", duration: 1.2, ease: "power2.out", delay: 0.2 });
         initScrollytelling();
+
+        // Scramble effect
+        const h1 = document.querySelector('#t1 h1') as HTMLElement;
+        if (h1) scrambleEffect(h1, 0.8);
       }
     });
 
@@ -158,7 +208,6 @@ export default function Hero() {
         onUpdate: () => {
           const ctx = canvasRef.current?.getContext("2d");
           if (ctx && framesRef.current[Math.round(seqRef.current.f)]) {
-            // Draw logic duplicate (optimization needed but for now)
             const im = framesRef.current[Math.round(seqRef.current.f)];
             const canvas = canvasRef.current!;
             const ir = im.width / im.height;
@@ -179,13 +228,23 @@ export default function Hero() {
       }
     });
 
-    // Sub-animations (T1, T2, T3)
     const hc = "#hero-container";
-    gsap.to(["#t1", "#scue"], {
-      opacity: 0, y: -60, ease: "none", stagger: 0.015,
-      scrollTrigger: { trigger: hc, start: "top top", end: "16% top", scrub: true }
+    
+    // Mouse Reactivity
+    window.addEventListener('mousemove', (e) => {
+        const x = (e.clientX - window.innerWidth / 2) / window.innerWidth;
+        const y = (e.clientY - window.innerHeight / 2) / window.innerHeight;
+        gsap.to('#t1 h1', {
+            x: x * 50,
+            y: y * 50,
+            rotateX: -y * 10,
+            rotateY: x * 10,
+            duration: 1.5,
+            ease: 'power2.out'
+        });
     });
 
+    // Brand crossfade
     gsap.to("#bl-hi", {
       opacity: 0, ease: "none",
       scrollTrigger: { trigger: hc, start: "top top", end: "10% top", scrub: true }
@@ -195,7 +254,66 @@ export default function Hero() {
       scrollTrigger: { trigger: hc, start: "14% top", end: "22% top", scrub: true }
     });
 
-    // Content reveals would go here...
+    // Content reveals
+    const t1 = document.getElementById('t1');
+    const t2 = document.getElementById('t2');
+    const t3 = document.getElementById('t3');
+    const sc = document.getElementById('scue');
+
+    gsap.to([t1, sc], {
+        opacity: 0, y: -60, ease: "none", stagger: .015,
+        scrollTrigger: { trigger: hc, start: "top top", end: "16% top", scrub: true }
+    });
+
+    if (t2) {
+        const t2Words = splitText(t2.querySelector('h2') as HTMLElement);
+        gsap.fromTo(t2, { opacity: 0, y: 70 }, {
+            opacity: 1, y: 0, ease: 'none',
+            scrollTrigger: { trigger: hc, start: '20% top', end: '35% top', scrub: true }
+        });
+        gsap.fromTo(t2Words,
+            { y: '120%', opacity: 0, rotateX: 65, filter: 'blur(10px)' },
+            {
+                y: '0%', opacity: 1, rotateX: 0, filter: 'blur(0px)',
+                ease: 'none', stagger: 0.02,
+                scrollTrigger: { trigger: hc, start: '20% top', end: '36% top', scrub: true }
+            }
+        );
+        gsap.to(t2Words, {
+            y: '-130%', opacity: 0, scale: 0.78, rotateX: -38, filter: 'blur(8px)',
+            ease: 'none', stagger: 0.02,
+            scrollTrigger: { trigger: hc, start: '42% top', end: '55% top', scrub: true }
+        });
+        gsap.to(t2, {
+            opacity: 0, ease: 'none',
+            scrollTrigger: { trigger: hc, start: '50% top', end: '54% top', scrub: true }
+        });
+    }
+
+    if (t3) {
+        const t3Words = splitText(t3.querySelector('h2') as HTMLElement);
+        gsap.fromTo(t3, { opacity: 0, y: 70 }, {
+            opacity: 1, y: 0, ease: 'none',
+            scrollTrigger: { trigger: hc, start: '53% top', end: '68% top', scrub: true }
+        });
+        gsap.fromTo(t3Words,
+            { y: '120%', opacity: 0, rotateX: 65, filter: 'blur(10px)' },
+            {
+                y: '0%', opacity: 1, rotateX: 0, filter: 'blur(0px)',
+                ease: 'none', stagger: 0.02,
+                scrollTrigger: { trigger: hc, start: '53% top', end: '69% top', scrub: true }
+            }
+        );
+        gsap.to(t3Words, {
+            y: '-130%', opacity: 0, scale: 0.78, rotateX: -38, filter: 'blur(8px)',
+            ease: 'none', stagger: 0.02,
+            scrollTrigger: { trigger: hc, start: '75% top', end: '88% top', scrub: true }
+        });
+        gsap.to(t3, {
+            opacity: 0, ease: 'none',
+            scrollTrigger: { trigger: hc, start: '83% top', end: '87% top', scrub: true }
+        });
+    }
   };
 
   return (
