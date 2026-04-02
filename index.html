@@ -540,7 +540,7 @@
 
     @media(max-width: 768px) {
       #hero-container {
-        height: 270vh; /* Slightly reduced sensitivity for better mobile pacing */
+        height: 540vh; /* Decreased sensitivity by 50% (doubled distance from 270vh) */
       }
     }
 
@@ -2450,9 +2450,9 @@
 
     // ── Lenis ──
     const lenis = new Lenis({
-      lerp: isMobile ? 0.14 : 0.08, // Increased snappiness on touch
+      lerp: isMobile ? 0.1 : 0.08, // Smoothed out for mobile
       duration: 1.2,
-      touchMultiplier: 2.5, // Better thumb-scrolling response
+      touchMultiplier: 1.25, // Exactly 50% of old value (2.5) for precise sensitivity control
       infinite: false,
       smoothWheel: true,
       syncTouch: true, // Sync with touch events for smoother scrubbing
@@ -2742,7 +2742,7 @@
           trigger: '#hero-container', 
           start: 'top top', 
           end: 'bottom bottom', 
-          scrub: isMobile ? 0.4 : 0.8 // Much more responsive scrub for touch devices
+          scrub: isMobile ? 0.8 : 0.8 // Uniform scrub for better control on mobile
         },
         onUpdate: () => draw(Math.round(seq.f))
       })
