@@ -248,6 +248,19 @@
       font-family:var(--serif);font-weight:300;font-style:italic;
       font-size:clamp(3.5rem,12vw,10rem);letter-spacing:-0.05em;line-height:1;
     }
+    
+    /* ── Responsive Text ── */
+    .m-text { display: none; }
+    @media (max-width: 768px) {
+      .d-text { display: none; }
+      .m-text { display: inline-block; }
+      
+      .l-logo .m-text {
+        font-size: 0.75rem;
+        letter-spacing: 0.15em;
+        font-style: normal;
+      }
+    }
     #t1 .t1-sub{display:flex;align-items:center;gap:1.5rem}
     #t1 .t1-line{width:32px;height:1px;background:var(--dim)}
     #t1 .t1-label{
@@ -789,7 +802,10 @@
       <div class="h-noise"></div>
 
       <div id="loader">
-        <div class="l-logo">Rudra Pratap Singh</div>
+        <div class="l-logo">
+          <span class="d-text">Rudra Pratap</span>
+          <span class="m-text">Large Screen Is Recommended</span>
+        </div>
         <div id="l-tagline" class="l-tagline" style="display:none;opacity:0;">
           Precision in thought,<br>Art in execution.
         </div>
@@ -1280,15 +1296,15 @@
 
   function scrambleEffect(el, duration = 1.4) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ/*-+_&';
-    const original = el.textContent;
+    const original = el.innerText;
     let frame = 0, maxFrames = Math.floor(duration * 60);
     function update() {
-      if (frame >= maxFrames) { el.textContent = original; return; }
+      if (frame >= maxFrames) { el.innerText = original; return; }
       const pct = frame / maxFrames;
       const revealed = Math.floor(pct * original.length);
       let str = original.slice(0, revealed);
       for (let i = revealed; i < original.length; i++) str += chars[Math.floor(Math.random() * chars.length)];
-      el.textContent = str; frame++;
+      el.innerText = str; frame++;
       requestAnimationFrame(update);
     }
     update();
