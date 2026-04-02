@@ -20,9 +20,9 @@
 
   <!-- WEBSITE ICON (FAVICON) -->
   <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22%23FF974C%22 font-family=%22sans-serif%22 font-weight=%22bold%22>RP</text></svg>">
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22%23FF974C%22 font-family=%22sans-serif%22 font-weight=%22900%22>RP</text></svg>">
   <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23080808%22/><text x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.35em%22 font-size=%2255%22 fill=%22%23FF974C%22 font-family=%22sans-serif%22 font-weight=%22bold%22>RP</text></svg>">
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23080808%22/><text x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.35em%22 font-size=%2255%22 fill=%22%23FF974C%22 font-family=%22sans-serif%22 font-weight=%22900%22>RP</text></svg>">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -121,8 +121,13 @@
       background: linear-gradient(90deg, var(--accent), var(--accent2));
       z-index: 9999;
       width: 0%;
-      transition: width 0.05s linear;
+      transition: width 0.05s linear, opacity 0.6s ease;
       pointer-events: none;
+      opacity: 0;
+    }
+
+    body.nav-active #progress-bar {
+      opacity: 1;
     }
 
     /* ── Cursor (Ink Style) ── */
@@ -143,8 +148,16 @@
       background: #f2f0eb;
       /* var(--white) */
       transform: translate(-50%, -50%);
-      transition: width .3s cubic-bezier(.16, 1, .3, 1), height .3s cubic-bezier(.16, 1, .3, 1), border-radius .3s cubic-bezier(.16, 1, .3, 1);
-      will-change: transform;
+      transition: width .4s var(--ease-out), height .4s var(--ease-out), 
+                  border-radius .4s var(--ease-out), transform .2s var(--ease-out), 
+                  opacity .2s var(--ease-out); /* Faster reappear */
+      will-change: transform, opacity;
+    }
+
+    #cursor.is-idle #cursor-dot {
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+      transition: transform .4s var(--ease-out), opacity .4s var(--ease-out); /* Slower fade out */
     }
 
     /* Hover States */
@@ -261,17 +274,19 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 200px;
+      height: 300px;
       z-index: 490;
       pointer-events: none;
       backdrop-filter: blur(0px);
+      background: rgba(6, 6, 6, 0);
       mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
       -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
-      transition: backdrop-filter 0.8s ease;
+      transition: backdrop-filter 0.8s ease, background 0.8s ease;
     }
 
     body.nav-active #top-vignette {
-      backdrop-filter: blur(14px)
+      backdrop-filter: blur(14px);
+      background: rgba(6, 6, 6, 0.75);
     }
 
     /* ── Brand Logo ── */
@@ -279,17 +294,20 @@
       position: fixed;
       top: 1.8rem;
       left: 2.5rem;
-      z-index: 600;
+      z-index: 6000;
       font-family: var(--serif);
       font-style: italic;
       font-size: 1.5rem;
-      color: var(--paper);
+      color: #f2f0eb; /* EXACT MATCH for cursor color */
       text-decoration: none;
       white-space: nowrap;
       pointer-events: none;
       padding: 0.5rem;
       margin: -0.5rem;
       opacity: 0;
+      mix-blend-mode: difference;
+      will-change: transform, opacity;
+      transform: translateZ(0); /* Create stacking context for GPU blending */
     }
 
     #bl-hi,
@@ -517,7 +535,13 @@
     /* ── Hero ── */
     #hero-container {
       position: relative;
-      height: 400vh
+      height: 345vh
+    }
+
+    @media(max-width: 768px) {
+      #hero-container {
+        height: 270vh; /* Slightly reduced sensitivity for better mobile pacing */
+      }
     }
 
     .h-sticky {
@@ -2426,11 +2450,12 @@
 
     // ── Lenis ──
     const lenis = new Lenis({
-      lerp: isMobile ? 0.12 : 0.08,
+      lerp: isMobile ? 0.14 : 0.08, // Increased snappiness on touch
       duration: 1.2,
-      touchMultiplier: 2,
+      touchMultiplier: 2.5, // Better thumb-scrolling response
       infinite: false,
-      smoothWheel: !isMobile,
+      smoothWheel: true,
+      syncTouch: true, // Sync with touch events for smoother scrubbing
     });
     lenis.scrollTo(0, { immediate: true });
     lenis.stop();
@@ -2471,10 +2496,32 @@
       let cx = 0, cy = 0; // Current coordinates
 
       // 1. Track Mouse
+      let idleTimer;
+      const hideCursor = () => cur.classList.add('is-idle');
+      const showCursor = () => {
+        // If coming back from idle, snap position immediately so it doesn't "glide" from old spot
+        if (cur.classList.contains('is-idle')) {
+          cx = tx; cy = ty;
+          cur.style.transform = `translate(${cx}px, ${cy}px)`;
+        }
+        cur.classList.remove('is-idle');
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(hideCursor, 800); 
+      };
+
       window.addEventListener('mousemove', e => {
         tx = e.clientX;
         ty = e.clientY;
+        showCursor();
       }, { passive: true });
+
+      // Hide on scroll
+      lenis.on('scroll', hideCursor);
+      // Show back briefly after scroll ends
+      lenis.on('scrollEnd', () => {
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(hideCursor, 250);
+      });
 
       // 2. Click Feedback (Ink Splat)
       window.addEventListener('click', e => {
@@ -2488,6 +2535,7 @@
 
       // 3. Reactive States (Expand on Hover)
       window.addEventListener('mouseover', e => {
+        showCursor(); // Wake up cursor immediately on entering new element
         const el = e.target.closest('a, button, .work-card, .srv-row, .stat-num, input, textarea, p, .about-body');
         if (!el) {
           cur.classList.remove('expanded', 'link', 'text-mode');
@@ -2687,12 +2735,19 @@
         });
       }
 
-      // Scrub
-      gsap.to(seq, {
-        f: n - 1, snap: 'f', ease: 'none',
-        scrollTrigger: { trigger: '#hero-container', start: 'top top', end: 'bottom bottom', scrub: 1.2 },
+      // Scrub (Last 5 frames 3x slower)
+      const firstPartEnd = Math.max(0, n - 6);
+      gsap.timeline({
+        scrollTrigger: { 
+          trigger: '#hero-container', 
+          start: 'top top', 
+          end: 'bottom bottom', 
+          scrub: isMobile ? 0.4 : 0.8 // Much more responsive scrub for touch devices
+        },
         onUpdate: () => draw(Math.round(seq.f))
-      });
+      })
+      .to(seq, { f: firstPartEnd, ease: 'none', duration: firstPartEnd })
+      .to(seq, { f: n - 1, ease: 'none', duration: (n - 1 - firstPartEnd) * 3 });
 
       const hc = '#hero-container';
       const t1 = document.getElementById('t1');
