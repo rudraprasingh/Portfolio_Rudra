@@ -26,6 +26,13 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
 
+  <!-- Performance: Critical Asset Preloading -->
+  <link rel="preload" href="sequence/frame_16_delay-0.066s.webp" as="image" fetchpriority="high">
+  <link rel="preload" href="sequence/frame_17_delay-0.066s.webp" as="image" fetchpriority="high">
+  <link rel="preload" href="sequence/frame_18_delay-0.066s.webp" as="image" fetchpriority="high">
+  <link rel="preload" href="sequence/frame_19_delay-0.066s.webp" as="image" fetchpriority="high">
+  <link rel="preload" href="sequence/frame_20_delay-0.066s.webp" as="image" fetchpriority="high">
+
   <style>
     /* ── Root ── */
     :root {
@@ -843,6 +850,13 @@
       padding: clamp(5rem, 10vw, 11rem) clamp(1.5rem, 5vw, 5rem);
       position: relative;
     }
+    
+    @media(min-width: 1024px) {
+      .sec {
+        content-visibility: auto; /* Desktop only: Skip rendering while off-screen */
+        contain-intrinsic-size: 1px 800px; 
+      }
+    }
 
     .sec-max {
       max-width: 1520px;
@@ -1014,32 +1028,17 @@
     }
 
     .srv-row {
-      display: grid;
-      grid-template-columns: 2.2rem 1fr auto;
+      display: flex;
       align-items: center;
       gap: 2rem;
-      padding: 1.8rem 0;
+      padding: 3rem 0;
       border-bottom: 1px solid var(--rule);
-      transition: border-color .5s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .srv-row::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: rgba(237, 232, 224, .025);
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform .6s var(--ease-out);
-    }
-
-    .srv-row:hover::before {
-      transform: scaleX(1)
+      transition: background .4s var(--ease-out);
+      will-change: transform, background;
     }
 
     .srv-row:hover {
+      background: rgba(237, 232, 224, .025);
       border-color: rgba(237, 232, 224, .16)
     }
 
@@ -1194,13 +1193,14 @@
     }
 
     .work-card {
-      position: relative;
       display: block;
       text-decoration: none;
-      color: var(--paper);
-      border-bottom: 1px solid var(--rule);
+      position: relative;
       overflow: hidden;
-      transition: border-color 0.6s ease;
+      border-radius: 12px;
+      background: var(--ink);
+      border: 1px solid var(--rule);
+      will-change: transform;
     }
 
     .work-card:first-child {
@@ -1642,8 +1642,12 @@
     }
 
     .ct-big .split-child {
-      will-change: transform, opacity, filter;
+      will-change: transform, opacity;
       text-shadow: 0 12px 30px rgba(0, 0, 0, .3)
+    }
+    
+    @media(max-width: 768px) {
+      .ct-big .split-child { text-shadow: none; }
     }
 
     .ct-big .ct-main {
@@ -1654,6 +1658,10 @@
       color: transparent;
       text-shadow: 0 14px 40px rgba(0, 0, 0, .5);
       animation: ctShimmer 9s ease-in-out infinite alternate;
+    }
+
+    @media(max-width: 768px) {
+      .ct-big .ct-main { text-shadow: none; }
     }
 
     @keyframes ctShimmer {
@@ -2233,7 +2241,7 @@
         <div class="work-showcase">
           <!-- Project 1 -->
           <a href="case-studies/stellar-banking.html" class="work-card rv" id="wr1">
-            <div class="wc-bg"><img src="images/case-studies/stellar_banking.jpg" alt=""></div>
+            <div class="wc-bg"><img src="images/case-studies/stellar_banking.jpg" alt="" decoding="async" width="800" height="480"></div>
             <div class="wc-inner">
               <span class="wc-idx">01</span>
               <div>
@@ -2248,7 +2256,7 @@
               </div>
               <div>
                 <div class="wc-media skeleton-bg">
-                  <img src="images/case-studies/stellar_banking.jpg" alt="Stellar Banking" class="lqip" loading="lazy"
+                  <img src="images/case-studies/stellar_banking.jpg" alt="Stellar Banking" class="lqip" loading="lazy" decoding="async"
                     width="1000" height="600" onload="this.classList.add('loaded')">
                 </div>
                 <div class="wc-meta">
@@ -2264,7 +2272,7 @@
 
           <!-- Project 2 -->
           <a href="case-studies/nova-os.html" class="work-card rv" id="wr2">
-            <div class="wc-bg"><img src="images/case-studies/nova_os.jpg" alt=""></div>
+            <div class="wc-bg"><img src="images/case-studies/nova_os.jpg" alt="" decoding="async" width="800" height="480"></div>
             <div class="wc-inner">
               <span class="wc-idx">02</span>
               <div>
@@ -2279,7 +2287,7 @@
               </div>
               <div>
                 <div class="wc-media skeleton-bg">
-                  <img src="images/case-studies/nova_os.jpg" alt="Nova OS" class="lqip" loading="lazy" width="1000"
+                  <img src="images/case-studies/nova_os.jpg" alt="Nova OS" class="lqip" loading="lazy" decoding="async" width="1000"
                     height="600" onload="this.classList.add('loaded')">
                 </div>
                 <div class="wc-meta">
@@ -2295,7 +2303,7 @@
 
           <!-- Project 3 -->
           <a href="case-studies/motion-systems.html" class="work-card rv" id="wr3">
-            <div class="wc-bg"><img src="images/case-studies/motion_systems.jpg" alt=""></div>
+            <div class="wc-bg"><img src="images/case-studies/motion_systems.jpg" alt="" decoding="async" width="800" height="480"></div>
             <div class="wc-inner">
               <span class="wc-idx">03</span>
               <div>
@@ -2464,7 +2472,7 @@
 
     // ── Lenis ──
     const lenis = new Lenis({
-      lerp: 0.045, // High inertia for constant smooth feel (replaces 0.08/0.1)
+      lerp: isMobile ? 0.075 : 0.045, // More responsive for mobile touch, high inertia for desktop
       duration: 1.2,
       touchMultiplier: 1.25, // Exactly 50% of old value (2.5) for precise sensitivity control
       infinite: false,
