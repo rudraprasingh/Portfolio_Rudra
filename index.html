@@ -587,6 +587,18 @@
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")
     }
 
+    /* Crossfade Vignette at Bottom of Hero */
+    #bottom-vignette {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 25vh;
+      z-index: 5;
+      pointer-events: none;
+      background: linear-gradient(to top, var(--ink) 0%, transparent 100%);
+    }
+
     /* Loader */
     #loader {
       position: absolute;
@@ -689,34 +701,6 @@
       letter-spacing: -0.05em;
       line-height: 1;
       color: #fff;
-      position: relative;
-    }
-
-    /* Move glow into pseudo-element and animate opacity instead of animating multiple text-shadows */
-    #t1 h1::after {
-      content: 'Rudra';
-      position: absolute;
-      inset: 0;
-      color: transparent;
-      pointer-events: none;
-      text-shadow: 
-        0 0 20px #00d2ff,
-        0 0 40px #00d2ff,
-        0 0 80px #00d2ff;
-      animation: neon-flicker 4s linear infinite;
-      will-change: opacity;
-    }
-
-    @keyframes neon-flicker {
-      0%, 18%, 22%, 25%, 53%, 57%, 100% {
-        opacity: 1;
-      }
-      19%, 21%, 23%, 24%, 54%, 56% {        
-        opacity: 0.1;
-      }
-      20%, 55% {
-        opacity: 0.5;
-      }
     }
 
     /* ── Responsive Text ── */
@@ -2193,16 +2177,28 @@
       const musicBtn = document.getElementById('music-toggle');
       if (!music || !musicBtn) return;
       
-      music.volume = 0.4;
+      const MAX_VOL = 0.4;
+      const FADE_DUR = 2000; // 2 seconds fade
       
       window.toggleMusic = function(forcePlay = false) {
         if (!music) return;
         if (forcePlay || music.paused) {
           music.muted = false;
-          // Attempt to play first to capture user gesture correctly
+          music.volume = 0; // Start at 0 for fade-in
+          
           music.play().then(() => {
             if (music.readyState >= 1) music.currentTime = 28.5;
             musicBtn.classList.remove('muted');
+            
+            // Fade in volume
+            let startTime = performance.now();
+            function fadeIn(now) {
+              let elapsed = now - startTime;
+              let pct = Math.min(elapsed / FADE_DUR, 1);
+              music.volume = pct * MAX_VOL;
+              if (pct < 1) requestAnimationFrame(fadeIn);
+            }
+            requestAnimationFrame(fadeIn);
           }).catch(e => {
             console.error('Audio playback error:', e);
           });
@@ -2263,6 +2259,7 @@
     <div class="h-sticky">
       <canvas id="hero-canvas" oncontextmenu="return false;"></canvas>
       <div id="hero-vignette"></div>
+      <div id="bottom-vignette"></div>
       <div class="h-noise"></div>
 
       <div id="loader">
@@ -2918,6 +2915,28 @@
         } else kIdx = 0;
       }
     });
+
+    // Mobile Easter Egg Trigger (5 rapid taps on the Brand Logo)
+    let tapCount = 0;
+    let tapTimer;
+    const blNode = document.getElementById('bl');
+    if (blNode) {
+      blNode.addEventListener('touchstart', (e) => {
+        if (eMod.classList.contains('active')) return;
+        tapCount++;
+        clearTimeout(tapTimer);
+        if (tapCount >= 5) {
+          tapCount = 0;
+          eMod.classList.add('active');
+          setTimeout(() => {
+            window.addEventListener('touchmove', closeEE, { passive: true });
+            if (typeof lenis !== 'undefined') lenis.on('scroll', closeEE);
+          }, 800);
+        } else {
+          tapTimer = setTimeout(() => { tapCount = 0; }, 450);
+        }
+      }, { passive: true });
+    }
 
     // ── Canvas ──
     gsap.registerPlugin(ScrollTrigger);
