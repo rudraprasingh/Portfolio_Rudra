@@ -56,7 +56,10 @@
     *::after {
       box-sizing: border-box;
       margin: 0;
-      padding: 0
+      padding: 0;
+      /* Global anti-flicker */
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
     }
 
     html {
@@ -102,9 +105,11 @@
     textarea,
     label {
       cursor: none !important;
-      /* Eliminate 300ms tap delay & remove blue flash on Android */
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
+      /* Prevent flickering during transitions */
+      transform: translateZ(0);
+      will-change: transform, opacity;
     }
 
     @media(pointer:coarse) {
@@ -244,7 +249,8 @@
       opacity: 0.035;
       mix-blend-mode: overlay;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      animation: grain 8s steps(10) infinite;
+      will-change: transform;
+      animation: grain 1.5s steps(3) infinite; /* Optimized: faster but fewer steps */
     }
 
     @media(max-width: 768px) {
@@ -254,47 +260,9 @@
     }
 
     @keyframes grain {
-
-      0%,
-      100% {
-        transform: translate(0, 0)
-      }
-
-      10% {
-        transform: translate(-5%, -10%)
-      }
-
-      20% {
-        transform: translate(-15%, 5%)
-      }
-
-      30% {
-        transform: translate(7%, -25%)
-      }
-
-      40% {
-        transform: translate(-5%, 25%)
-      }
-
-      50% {
-        transform: translate(-15%, 10%)
-      }
-
-      60% {
-        transform: translate(15%, 0%)
-      }
-
-      70% {
-        transform: translate(0%, 15%)
-      }
-
-      80% {
-        transform: translate(3%, 35%)
-      }
-
-      90% {
-        transform: translate(-10%, 10%)
-      }
+      0%, 100% { transform: translate(0, 0) }
+      33% { transform: translate(-5%, -10%) }
+      66% { transform: translate(-10%, 5%) }
     }
 
     /* ── Top vignette ── */
@@ -575,12 +543,12 @@
     /* ── Hero ── */
     #hero-container {
       position: relative;
-      height: 517vh; /* Halved from 1035vh to increase scroll speed by 100% */
+      height: 250vh; /* Reduced for much snappier scroll speed and less GSAP duration */
     }
 
     @media(max-width: 768px) {
       #hero-container {
-        height: 810vh; /* Halved from 1620vh */
+        height: 350vh; /* Scaled down for mobile */
       }
     }
 
@@ -606,7 +574,7 @@
       position: absolute;
       inset: 0;
       pointer-events: none;
-      background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.45) 100%);
+      background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.6) 100%);
       z-index: 2;
     }
 
@@ -721,33 +689,33 @@
       letter-spacing: -0.05em;
       line-height: 1;
       color: #fff;
+      position: relative;
+    }
+
+    /* Move glow into pseudo-element and animate opacity instead of animating multiple text-shadows */
+    #t1 h1::after {
+      content: 'Rudra';
+      position: absolute;
+      inset: 0;
+      color: transparent;
+      pointer-events: none;
       text-shadow: 
-        0 0 7px #fff,
-        0 0 10px #fff,
-        0 0 21px #fff,
-        0 0 42px var(--accent),
-        0 0 82px var(--accent),
-        0 0 92px var(--accent),
-        0 0 102px var(--accent),
-        0 0 151px var(--accent);
+        0 0 20px #00d2ff,
+        0 0 40px #00d2ff,
+        0 0 80px #00d2ff;
       animation: neon-flicker 4s linear infinite;
+      will-change: opacity;
     }
 
     @keyframes neon-flicker {
       0%, 18%, 22%, 25%, 53%, 57%, 100% {
-        text-shadow: 
-          0 0 7px #fff,
-          0 0 10px #fff,
-          0 0 21px #fff,
-          0 0 42px var(--accent),
-          0 0 82px var(--accent),
-          0 0 92px var(--accent),
-          0 0 102px var(--accent),
-          0 0 151px var(--accent);
+        opacity: 1;
       }
       19%, 21%, 23%, 24%, 54%, 56% {        
-        text-shadow: none;
-        opacity: 0.8;
+        opacity: 0.1;
+      }
+      20%, 55% {
+        opacity: 0.5;
       }
     }
 
@@ -952,6 +920,8 @@
       display: inline-block;
       will-change: transform;
       transform: translateY(105%);
+      /* Ensure no text wobbling */
+      transform-style: preserve-3d;
     }
 
     .rule {
@@ -1446,8 +1416,9 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      filter: blur(40px) brightness(0.25);
-      transform: scale(1.3);
+      filter: blur(20px) brightness(0.25); /* Reduced blur for performance */
+      transform: scale(1.1); /* Reduced scale */
+      will-change: opacity; /* Encourage hardware layer */
     }
 
     .work-card:hover .wc-bg {
@@ -1782,6 +1753,9 @@
       position: relative;
       overflow: hidden;
       border: 1px solid rgba(0,0,0,0.05);
+      /* Force Hardware Acceleration to prevent flickering */
+      transform: translate3d(0,0,0);
+      -webkit-font-smoothing: subpixel-antialiased;
     }
 
     .btn-p::before {
@@ -2229,7 +2203,6 @@
           music.play().then(() => {
             if (music.readyState >= 1) music.currentTime = 28.5;
             musicBtn.classList.remove('muted');
-            console.log('Audio playing successfully');
           }).catch(e => {
             console.error('Audio playback error:', e);
           });
@@ -2900,7 +2873,7 @@
       function loopCursor(ts) {
         if (!document.hidden) {
           const dt = Math.min((ts - lastTs) / 16.67, 3); // Delta time for frame-rate independence
-          const lerp = 1 - Math.pow(1 - 0.24, dt);      // Increased for snappier response
+          const lerp = 1 - Math.pow(1 - 0.16, dt);      // Subtler, creamier lerp for high-end feel
           cx += (tx - cx) * lerp;
           cy += (ty - cy) * lerp;
           cur.style.transform = `translate3d(${cx}px, ${cy}px, 0)`; 
@@ -3080,7 +3053,10 @@
 
       for (let i = start; i <= end; i++) {
         const img = new Image();
-        const fIdx = i > 82 ? 82 : i; // Copy frame 82 for higher indices
+        let fIdx = i > 82 ? 82 : i; // Copy frame 82 for higher indices
+        if (fIdx === 18) fIdx = 17; // Patch missing frame 18
+        if (fIdx === 71) fIdx = 70; // Patch missing frame 71
+        
         img.src = `sequence/frame_${fIdx.toString().padStart(2, '0')}_delay-0.066s.webp`;
         img.onload = () => { 
           ok++; 
@@ -3249,21 +3225,24 @@
       }, 0.82);
       masterTL.to(t3, { opacity: 0, duration: d, ease: 'none' }, 0.9);
 
-      // Section reveals (standard ScrollTriggers are fine for non-fixed content)
-      // BATCH REVEALS (Performance: Massive reduction in ScrollTrigger instances)
+      // INITIALIZE REVEALS: Hide elements immediately to prevent flash during scroll
+      gsap.set('.rv, .rv2', { opacity: 0, y: 40 });
+
+      // BATCH REVEALS (Performance & Premium Polish)
       ScrollTrigger.batch('.rv, .rv2', {
-        onEnter: batch => gsap.fromTo(batch, { opacity: 0, y: 35 }, {
-          opacity: 1, y: 0, duration: 1, ease: 'power4.out', stagger: 0.1, overwrite: 'auto', force3D: true
+        onEnter: batch => gsap.to(batch, {
+          opacity: 1, y: 0, duration: 1.4, ease: 'expo.out', stagger: 0.12, overwrite: 'auto', force3D: true
         }),
-        start: 'top 94%'
+        once: true, // Only animate once to prevent re-trigger bugs
+        start: 'top 92%'
       });
 
       // Section title split
       document.querySelectorAll('.sec-title').forEach(title => {
         const words = splitText(title);
         gsap.to(words, {
-          y: '0%', duration: .95, ease: 'power3.out', stagger: .05,
-          scrollTrigger: { trigger: title, start: 'top 86%', toggleActions: 'play none none none' }
+          y: '0%', duration: 1.3, ease: 'expo.out', stagger: .06,
+          scrollTrigger: { trigger: title, start: 'top 88%', toggleActions: 'play none none none' }
         });
       });
 
@@ -3294,6 +3273,7 @@
       });
 
       // Contact headline split
+      const ctBig = document.querySelector('.ct-big');
       if (ctBig) {
         const ctWords = splitText(ctBig);
         gsap.set(ctWords, { y: '105%', opacity: 0 });
@@ -3315,26 +3295,32 @@
             const x = e.clientX - rect.left - rect.width / 2;
             const y = e.clientY - rect.top - rect.height / 2;
             const strength = el.id === 'bl' ? 0.4 : (el.closest('#nav') ? 0.32 : 0.42);
-            gsap.to(el, { x: x * strength, y: y * strength, duration: 0.4, ease: 'power2.out' });
+            gsap.to(el, { 
+              x: x * strength, 
+              y: y * strength, 
+              duration: 0.6, 
+              ease: 'power3.out',
+              overwrite: 'auto' // Prevent conflicting animations from causing flicker
+            });
           }, { passive: true });
           el.addEventListener('mouseleave', () => {
-            gsap.to(el, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1,0.3)' });
+            gsap.to(el, { x: 0, y: 0, duration: 0.8, ease: 'elastic.out(1.2,0.4)', overwrite: 'auto' });
             rect = null;
           });
         });
       }
 
-      // Work 3D tilt (desktop)
+      // Premium Work 3D tilt (desktop)
       if (!isMobile) {
         document.querySelectorAll('.work-card').forEach(card => {
           card.addEventListener('mousemove', e => {
             const b = card.getBoundingClientRect();
             const dx = (e.clientX - b.left - b.width / 2) / (b.width / 2);
             const dy = (e.clientY - b.top - b.height / 2) / (b.height / 2);
-            gsap.to(card, { rotateY: dx * 6, rotateX: -dy * 6, duration: .12, ease: 'none' });
+            gsap.to(card, { rotateY: dx * 7, rotateX: -dy * 7, duration: 0.6, ease: 'power3.out', overwrite: 'auto' });
           });
           card.addEventListener('mouseleave', () => {
-            gsap.to(card, { rotateX: 0, rotateY: 0, duration: .6, ease: 'power2.out' });
+            gsap.to(card, { rotateX: 0, rotateY: 0, duration: 1.2, ease: 'expo.out', overwrite: 'auto' });
           });
         });
       }
