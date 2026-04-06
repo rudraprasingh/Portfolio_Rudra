@@ -633,30 +633,46 @@
       letter-spacing: -0.02em;
     }
 
+    #l-content {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 160px;
+      height: 160px;
+    }
+
     .l-pct {
+      position: absolute;
       font-family: var(--mono);
-      font-size: 2.2rem;
+      font-size: 1.2rem;
       font-weight: 300;
-      letter-spacing: -.02em;
-      opacity: .12;
+      letter-spacing: 0.1em;
+      opacity: .8;
       line-height: 1;
-      margin-bottom: .75rem;
     }
 
-    .l-bar {
-      width: 120px;
-      height: 1px;
-      background: var(--rule)
-    }
-
-    .l-fill {
-      height: 1px;
-      background: var(--paper);
+    .l-svg {
+      transform: rotate(-90deg);
       width: 100%;
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform .15s;
-      will-change: transform;
+      height: 100%;
+    }
+
+    .l-circle-bg {
+      fill: none;
+      stroke: var(--rule);
+      stroke-width: 0.5;
+    }
+
+    .l-circle-fill {
+      fill: none;
+      stroke: var(--paper);
+      stroke-width: 1.2;
+      stroke-linecap: round;
+      stroke-dasharray: 283;
+      stroke-dashoffset: 283;
+      transition: stroke-dashoffset 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: stroke-dashoffset;
     }
 
     #explore-btn {
@@ -680,7 +696,26 @@
       inset: 0;
       z-index: 10;
       pointer-events: none;
-      color: var(--paper)
+      color: var(--paper);
+      /* Prevent accidental text selection during multi-tap on mobile */
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    /* Allow the title to receive touches for the mobile secret trigger */
+    #t1 h1 {
+      pointer-events: auto !important;
+      font-family: var(--serif);
+      font-weight: 300;
+      font-style: italic;
+      font-size: clamp(3.5rem, 12vw, 10rem);
+      letter-spacing: -0.05em;
+      line-height: 1;
+      color: #fff;
+      /* Optimization for secret trigger */
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     #t1 {
@@ -691,16 +726,6 @@
       align-items: center;
       justify-content: center;
       gap: 1.8rem;
-    }
-
-    #t1 h1 {
-      font-family: var(--serif);
-      font-weight: 300;
-      font-style: italic;
-      font-size: clamp(3.5rem, 12vw, 10rem);
-      letter-spacing: -0.05em;
-      line-height: 1;
-      color: #fff;
     }
 
     /* ── Responsive Text ── */
@@ -2151,70 +2176,97 @@
     .wc-media img {
       will-change: transform;
     }
-    /* ── Expert Mode (Cheat Code) ── */
+    /* ── Expert Mode (Award-Winning Hacker Aesthetic) ── */
     body.expert-mode {
-      --ink: #050505;
-      --paper: #00ff41;
-      --accent: #008f11;
-      --accent2: #00ff41;
-      --dim: rgba(0, 255, 65, 0.7);
+      --ink: #010400; /* Deep absolute black */
+      --paper: #ccebc4; /* Washed-out green/white for readable text */
+      --accent: #00ff41; /* True terminal green */
+      --accent2: #00f0ff; /* Cyber cyan */
+      --dim: rgba(0, 255, 65, 0.4);
+      --dimmer: rgba(0, 255, 65, 0.15);
       --rule: rgba(0, 255, 65, 0.3);
-      --rule-mid: rgba(0, 255, 65, 0.5);
-      text-shadow: 0 0 5px rgba(0, 255, 65, 0.4);
+      --rule-mid: rgba(0, 255, 65, 0.6);
+      
+      --serif: var(--mono);
+      --sans: var(--mono);
     }
+    
     body.expert-mode * {
       cursor: crosshair !important;
     }
+    
+    /* Glitch Typography for Headings */
     body.expert-mode h1, body.expert-mode h2, body.expert-mode h3, 
     body.expert-mode .ct-serif, body.expert-mode .srv-name, 
     body.expert-mode .wc-title {
+      font-style: normal !important;
       letter-spacing: -0.05em !important;
       text-transform: uppercase;
-      text-shadow: 0 0 10px rgba(0, 255, 65, 0.8);
+      color: var(--accent);
+      text-shadow: 2px 0 0 rgba(255,0,80,0.7), -2px 0 0 rgba(0,255,255,0.7);
+      animation: textGlitch 4s infinite linear alternate-reverse;
     }
+    
+    @keyframes textGlitch {
+      0%, 100% { text-shadow: 2px 0 0 rgba(255,0,80,0.7), -2px 0 0 rgba(0,255,255,0.7); }
+      20% { text-shadow: -2px 0 0 rgba(0,255,255,0.7), 2px 0 0 rgba(255,0,80,0.7); }
+      40% { text-shadow: 2px 0 0 rgba(0,255,65,0.7), -2px 0 0 rgba(0,255,255,0.7); transform: skewX(1deg); }
+      42% { transform: skewX(0deg); }
+      80% { text-shadow: 2px 0 0 rgba(255,0,80,0.7), -2px 0 0 rgba(0,255,255,0.7); }
+    }
+
     body.expert-mode .hero-mq, body.expert-mode .mq {
       background: var(--ink);
-      border-color: var(--paper);
+      border-color: var(--accent);
     }
+    
     body.expert-mode .hero-mq span, body.expert-mode .mq-track span {
-      color: var(--paper) !important;
+      color: var(--accent) !important;
       font-weight: 700;
-      border-color: var(--paper);
+      border-color: var(--accent);
+      text-shadow: 0 0 10px rgba(0, 255, 65, 0.4);
     }
-    body.expert-mode #hero-canvas {
-      filter: grayscale(1) contrast(1.2) !important;
+    
+    /* Advanced Image Processing */
+    body.expert-mode #hero-canvas, body.expert-mode .wc-media img {
+      /* Clean Black and White filter */
+      filter: grayscale(100%) contrast(1.2) brightness(0.9) !important;
       opacity: 0.8 !important;
     }
-    body.expert-mode .wc-media img {
-      filter: grayscale(1) sepia(1) hue-rotate(80deg) saturate(3) contrast(1.2) !important;
-    }
+    
     body.expert-mode #grain {
-      opacity: 0.15;
+      opacity: 0.25;
     }
-    body.expert-mode::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15) 1px, transparent 1px, transparent 2px);
-      z-index: 99999;
-      pointer-events: none;
-      animation: scanline 10s linear infinite;
-    }
-    @keyframes scanline {
-      0% {
-        background-position: 0 0;
-      }
-      100% {
-        background-position: 0 100vh;
-      }
-    }
+
+    /* Background Blueprint Grid */
     body.expert-mode::before {
       content: "";
       position: fixed;
       inset: 0;
-      box-shadow: inset 0 0 150px rgba(0, 255, 65, 0.15);
+      background-image: 
+        linear-gradient(rgba(0, 255, 65, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 65, 0.05) 1px, transparent 1px);
+      background-size: 30px 30px;
+      background-position: center center;
+      z-index: 99997;
       pointer-events: none;
-      z-index: 99998;
+    }
+
+    /* Subtle Scanlines & CRT Glow Overlay */
+    body.expert-mode::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) 1px, transparent 1px, transparent 2px);
+      box-shadow: inset 0 0 150px rgba(0, 255, 65, 0.15);
+      z-index: 99999;
+      pointer-events: none;
+      animation: scanline 10s linear infinite;
+    }
+    
+    @keyframes scanline {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 100vh; }
     }
   </style>
 </head>
@@ -2345,10 +2397,11 @@
           Precision in thought,<br>Art in execution.
         </div>
         <div id="l-content">
-          <div class="l-pct" id="l-pct">0</div>
-          <div class="l-bar">
-            <div class="l-fill" id="l-fill"></div>
-          </div>
+          <div class="l-pct"><span id="l-pct">0</span>%</div>
+          <svg class="l-svg" viewBox="0 0 100 100">
+            <circle class="l-circle-bg" cx="50" cy="50" r="45"></circle>
+            <circle id="l-fill" class="l-circle-fill" cx="50" cy="50" r="45"></circle>
+          </svg>
         </div>
         <div id="explore-group" style="display:none;opacity:0;margin-top:1.2rem;">
           <button id="explore-btn" class="btn-p magnetic">
@@ -2959,50 +3012,106 @@
     const expertCode = ['r', 'u', 'd', 'r', 'a'];
     let expIdx = 0;
     
-    function playMatrixEffect() {
-      let c = document.getElementById("matrix-canvas");
-      if (!c) {
-        c = document.createElement("canvas");
-        c.id = "matrix-canvas";
-        c.style.cssText = "position:fixed;inset:0;width:100%;height:100%;z-index:100000;pointer-events:none;opacity:0;transition:opacity 0.4s ease;";
-        document.body.appendChild(c);
-      }
-      c.width = window.innerWidth;
-      c.height = window.innerHeight;
-      c.style.opacity = '1';
+    function playExpertTransition() {
+      const isExiting = document.body.classList.contains('expert-mode');
       
-      const ctx = c.getContext("2d");
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%\"'#&_(),.;:?!\\|{}<>[]^~".split("");
-      const fontSize = 16;
-      const columns = c.width / fontSize;
-      const drops = [];
-      for (let x = 0; x < columns; x++) drops[x] = 1;
-
-      // Fill black initially for a cool solid transition
-      ctx.fillStyle = "rgba(0, 0, 0, 1)";
-      ctx.fillRect(0, 0, c.width, c.height);
-
-      const matrixInterval = setInterval(() => {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
-        ctx.fillRect(0, 0, c.width, c.height);
+      if (!isExiting) {
+        // ── ENTRANCE: Hacker Matrix (Normal -> Expert) ──
+        const bs = document.createElement('div');
+        bs.id = "expert-transition";
+        bs.style.cssText = "position:fixed;inset:0;background:#000;z-index:999999;display:flex;align-items:center;justify-content:center;overflow:hidden;pointer-events:none;opacity:0;";
         
-        ctx.fillStyle = "#00ff41"; 
-        ctx.font = fontSize + "px 'DM Mono', monospace";
-        ctx.textAlign = "center";
+        const canvas = document.createElement("canvas");
+        canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;opacity:0.3;z-index:1;";
+        bs.appendChild(canvas);
+        document.body.appendChild(bs);
         
-        for (let i = 0; i < drops.length; i++) {
-            const text = chars[Math.floor(Math.random() * chars.length)];
-            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-            if (drops[i] * fontSize > c.height && Math.random() > 0.975) drops[i] = 0;
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const matrixChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%\"'#&_(),.;:?!\\|{}<>[]^~".split("");
+        const fontSize = 14;
+        const columns = Math.ceil(canvas.width / fontSize);
+        const drops = Array(columns).fill(0).map(() => Math.random() * -100);
+
+        const matrixInterval = setInterval(() => {
+          ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = "#00ff41"; 
+          ctx.font = fontSize + "px 'DM Mono'";
+          for (let i = 0; i < drops.length; i++) {
+            if (drops[i] > 0) {
+              const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+              ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            }
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
             drops[i]++;
-        }
-      }, 40);
+          }
+        }, 33);
 
-      // Fade out and remove after 2.5 seconds
-      setTimeout(() => {
-        c.style.opacity = '0';
-        setTimeout(() => { clearInterval(matrixInterval); c.remove(); }, 400);
-      }, 2500);
+        const tl = gsap.timeline({ onComplete: () => { clearInterval(matrixInterval); bs.remove(); } });
+        tl.to(bs, { opacity: 1, duration: 0.35, ease: "power2.out" });
+        tl.to(bs, {
+          backgroundColor: "#fff",
+          scaleY: 0.005,
+          duration: 0.35,
+          ease: "power3.inOut",
+          delay: 0.8,
+          onStart: () => { document.body.classList.toggle('expert-mode'); canvas.style.display = "none"; }
+        });
+        tl.to(bs, { scaleX: 0, opacity: 0, duration: 0.45, ease: "power4.in" });
+
+      } else {
+        // ── EXIT: Smooth Black Frosted Reveal (Expert -> Normal) ──
+        const bs = document.createElement('div');
+        bs.style.cssText = "position:fixed;inset:0;z-index:999999;display:flex;pointer-events:none;";
+        document.body.appendChild(bs);
+        
+        // Multi-layer masking: Frosted Columns + A Blackout Under-layer
+        const mask = document.createElement('div');
+        mask.style.cssText = "position:absolute;inset:0;background:#000;opacity:0;z-index:-1;";
+        bs.appendChild(mask);
+
+        const count = 10;
+        const columns = [];
+        for (let i = 0; i < count; i++) {
+          const col = document.createElement('div');
+          // Reduced blur to 14px for better GPU performance behind transitions
+          col.style.cssText = "flex:1;height:100%;background:rgba(0,0,0,0.65);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-right:1px solid rgba(255,255,255,0.05);transform:scaleY(0);transform-origin:top;";
+          bs.appendChild(col);
+          columns.push(col);
+        }
+
+        const tl = gsap.timeline({ onComplete: () => bs.remove() });
+
+        // Phase 1: Staggered columns enter
+        tl.to(columns, { 
+          scaleY: 1, 
+          duration: 0.8, 
+          stagger: 0.05, 
+          ease: "expo.inOut" 
+        });
+        
+        // Phase 2: Fade in the blackout mask to cover the jump
+        tl.to(mask, { opacity: 1, duration: 0.3 }, "-=0.4");
+        
+        // Phase 3: Toggle theme hidden behind the mask
+        tl.add(() => {
+          document.body.classList.toggle('expert-mode');
+        });
+
+        // Phase 4: Smoothly fade the mask away while columns are still present
+        tl.to(mask, { opacity: 0, duration: 1.2, ease: "power2.inOut" }, "+=0.1");
+
+        // Phase 5: Staggered exit
+        tl.to(columns, { 
+          scaleY: 0, 
+          transformOrigin: "bottom", 
+          duration: 0.8, 
+          stagger: 0.05, 
+          ease: "expo.inOut"
+        }, "-=1.0"); // Overlap with mask fade for that "gliding" feel
+      }
     }
     
     window.addEventListener('keydown', e => {
@@ -3012,11 +3121,7 @@
       if (e.key.toLowerCase() === expertCode[expIdx]) {
         expIdx++;
         if (expIdx === expertCode.length) {
-          document.body.classList.toggle('expert-mode');
-          
-          if (document.body.classList.contains('expert-mode')) {
-            playMatrixEffect();
-          }
+          playExpertTransition();
           expIdx = 0;
         }
       } else {
@@ -3091,12 +3196,10 @@
         clearTimeout(expertTapTimer);
         if (expertTapCount >= 5) {
           expertTapCount = 0;
-          document.body.classList.toggle('expert-mode');
-          if (document.body.classList.contains('expert-mode')) {
-            playMatrixEffect();
-          }
+          playExpertTransition();
         } else {
-          expertTapTimer = setTimeout(() => { expertTapCount = 0; }, 450);
+          // Slightly increased timer for mobile reliability (600ms)
+          expertTapTimer = setTimeout(() => { expertTapCount = 0; }, 600);
         }
       }, { passive: true });
     }
@@ -3242,16 +3345,32 @@
         img.src = `sequence/frame_${fIdx.toString().padStart(2, '0')}_delay-0.066s.webp`;
         img.onload = () => { 
           ok++; 
-          // Warm up image: forces decode in background
-          if (img.decode) {
-             img.decode().then(() => tick(total, fallbackTimer)).catch(() => tick(total, fallbackTimer));
-          } else {
-             tick(total, fallbackTimer);
-          }
+          tick(total, fallbackTimer);
         };
         img.onerror = () => { bad++; tick(total, fallbackTimer); };
         imgs.push(img);
       }
+    }
+
+    async function cacheImages() {
+      const total = imgs.length;
+      const offCanvas = document.createElement('canvas'); // Temp canvas for caching
+      offCanvas.width = 100; offCanvas.height = 100;
+      const offCtx = offCanvas.getContext('2d');
+      
+      for (let i = 0; i < total; i++) {
+        const img = imgs[i];
+        if (img && img.complete) {
+          // Draw to a small area to force GPU upload
+          offCtx.drawImage(img, 0, 0, 10, 10);
+          // Wait for next frame to keep main thread responsive for loader updates
+          if (i % 8 === 0) await new Promise(r => requestAnimationFrame(r));
+          const p = Math.round((i / total) * 100);
+          lPct.textContent = p;
+          lFill.style.strokeDashoffset = 283 - (p / 100) * 283;
+        }
+      }
+      setTimeout(showExplore, 400);
     }
 
     function showExplore() {
@@ -3294,14 +3413,15 @@
     function tick(total, fallbackTimer) {
       const done = ok + bad, pct = Math.round(done / total * 100);
       lPct.textContent = pct;
-      lFill.style.transform = `scaleX(${pct / 100})`;
+      const offset = 283 - (pct / 100) * 283;
+      lFill.style.strokeDashoffset = offset;
       if (done === total) {
         clearTimeout(fallbackTimer);
         const valid = imgs.filter(im => im.complete && im.naturalHeight);
         FRAMES = valid.length;
         if (FRAMES > 0) {
           imgs.splice(0, imgs.length, ...valid);
-          showExplore();
+          cacheImages();
         } else {
           showNoFrames();
         }
