@@ -543,12 +543,12 @@
     /* ── Hero ── */
     #hero-container {
       position: relative;
-      height: 250vh; /* Reduced for much snappier scroll speed and less GSAP duration */
+      height: 600vh; /* Increased to slow down the 120-frame animation */
     }
 
     @media(max-width: 768px) {
       #hero-container {
-        height: 350vh; /* Scaled down for mobile */
+        height: 800vh; /* Scaled for mobile for much slower, fluid progression */
       }
     }
 
@@ -1665,6 +1665,7 @@
       display: inline-block;
       width: max-content;
       max-width: 100%;
+      padding: 0.1em 0;
     }
 
     .ct-big .ct-kicker {
@@ -1681,14 +1682,19 @@
     .ct-big .ct-serif {
       font-family: var(--serif);
       font-size: clamp(3rem, 10vw, 8.5rem);
-      line-height: .82;
+      line-height: 0.8;
       font-style: italic;
       color: var(--paper);
-      margin-bottom: 0.28em;
+      margin-bottom: -0.15em;
+      margin-top: -0.45em;
+      position: relative;
+      z-index: 2;
     }
 
     .ct-big .ct-outline {
-      line-height: .9;
+      position: relative;
+      z-index: 1;
+      line-height: 0.95;
       font-family: var(--sans);
       font-weight: 900;
       font-size: clamp(1.44rem, 4.8vw, 4.4rem);
@@ -2145,6 +2151,74 @@
     .wc-media img {
       will-change: transform;
     }
+    /* ── Expert Mode (Cheat Code) ── */
+    body.expert-mode {
+      --ink: #050505;
+      --paper: #00ff41;
+      --accent: #008f11;
+      --accent2: #00ff41;
+      --dim: rgba(0, 255, 65, 0.7);
+      --rule: rgba(0, 255, 65, 0.3);
+      --rule-mid: rgba(0, 255, 65, 0.5);
+      text-shadow: 0 0 5px rgba(0, 255, 65, 0.4);
+    }
+    body.expert-mode * {
+      cursor: crosshair !important;
+    }
+    body.expert-mode h1, body.expert-mode h2, body.expert-mode h3, 
+    body.expert-mode .ct-serif, body.expert-mode .srv-name, 
+    body.expert-mode .wc-title {
+      font-family: var(--mono) !important;
+      font-style: normal !important;
+      letter-spacing: -0.05em !important;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(0, 255, 65, 0.8);
+    }
+    body.expert-mode .hero-mq, body.expert-mode .mq {
+      background: var(--ink);
+      border-color: var(--paper);
+    }
+    body.expert-mode .hero-mq span, body.expert-mode .mq-track span {
+      color: var(--paper) !important;
+      font-family: var(--mono) !important;
+      font-weight: 700;
+      border-color: var(--paper);
+    }
+    body.expert-mode #hero-canvas {
+      filter: grayscale(1) contrast(1.2) !important;
+      opacity: 0.8 !important;
+    }
+    body.expert-mode .wc-media img {
+      filter: grayscale(1) sepia(1) hue-rotate(80deg) saturate(3) contrast(1.2) !important;
+    }
+    body.expert-mode #grain {
+      opacity: 0.15;
+    }
+    body.expert-mode::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15) 1px, transparent 1px, transparent 2px);
+      z-index: 99999;
+      pointer-events: none;
+      animation: scanline 10s linear infinite;
+    }
+    @keyframes scanline {
+      0% {
+        background-position: 0 0;
+      }
+      100% {
+        background-position: 0 100vh;
+      }
+    }
+    body.expert-mode::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      box-shadow: inset 0 0 150px rgba(0, 255, 65, 0.15);
+      pointer-events: none;
+      z-index: 99998;
+    }
   </style>
 </head>
 
@@ -2187,14 +2261,17 @@
           music.volume = 0; // Start at 0 for fade-in
           
           music.play().then(() => {
-            if (music.readyState >= 1) music.currentTime = 28.5;
+            try {
+              if (music.readyState >= 1) music.currentTime = 28.5;
+            } catch(e) {}
             musicBtn.classList.remove('muted');
             
-            // Fade in volume
-            let startTime = performance.now();
+            // Fade in volume safely
+            let startNow = null;
             function fadeIn(now) {
-              let elapsed = now - startTime;
-              let pct = Math.min(elapsed / FADE_DUR, 1);
+              if (!startNow) startNow = now;
+              let elapsed = now - startNow;
+              let pct = Math.max(0, Math.min(elapsed / FADE_DUR, 1));
               music.volume = pct * MAX_VOL;
               if (pct < 1) requestAnimationFrame(fadeIn);
             }
@@ -2743,8 +2820,8 @@
 
     // ── Lenis ──
     const lenis = new Lenis({
-      lerp: isMobile ? 0.1 : 0.065,  // Higher lerp on mobile = less work per frame
-      duration: isMobile ? 1.0 : 1.2,
+      lerp: 0.05,  // iOS-like buttery smooth inertia
+      wheelMultiplier: 1, 
       touchMultiplier: 1.25,
       infinite: false,
       smoothWheel: !isMobile,         // Native scroll on touch = no Lenis overhead
@@ -2881,6 +2958,75 @@
       requestAnimationFrame(loopCursor);
     }
 
+    // ── Expert Mode Cheat Code ──
+    const expertCode = ['r', 'u', 'd', 'r', 'a'];
+    let expIdx = 0;
+    
+    function playMatrixEffect() {
+      let c = document.getElementById("matrix-canvas");
+      if (!c) {
+        c = document.createElement("canvas");
+        c.id = "matrix-canvas";
+        c.style.cssText = "position:fixed;inset:0;width:100%;height:100%;z-index:100000;pointer-events:none;opacity:0;transition:opacity 0.4s ease;";
+        document.body.appendChild(c);
+      }
+      c.width = window.innerWidth;
+      c.height = window.innerHeight;
+      c.style.opacity = '1';
+      
+      const ctx = c.getContext("2d");
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%\"'#&_(),.;:?!\\|{}<>[]^~".split("");
+      const fontSize = 16;
+      const columns = c.width / fontSize;
+      const drops = [];
+      for (let x = 0; x < columns; x++) drops[x] = 1;
+
+      // Fill black initially for a cool solid transition
+      ctx.fillStyle = "rgba(0, 0, 0, 1)";
+      ctx.fillRect(0, 0, c.width, c.height);
+
+      const matrixInterval = setInterval(() => {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
+        ctx.fillRect(0, 0, c.width, c.height);
+        
+        ctx.fillStyle = "#00ff41"; 
+        ctx.font = fontSize + "px 'DM Mono', monospace";
+        ctx.textAlign = "center";
+        
+        for (let i = 0; i < drops.length; i++) {
+            const text = chars[Math.floor(Math.random() * chars.length)];
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            if (drops[i] * fontSize > c.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+        }
+      }, 40);
+
+      // Fade out and remove after 2.5 seconds
+      setTimeout(() => {
+        c.style.opacity = '0';
+        setTimeout(() => { clearInterval(matrixInterval); c.remove(); }, 400);
+      }, 2500);
+    }
+    
+    window.addEventListener('keydown', e => {
+      // Ignore if modified keys are pressed or if user is interacting with an input
+      if (!e.key || e.ctrlKey || e.altKey || e.metaKey || document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
+      
+      if (e.key.toLowerCase() === expertCode[expIdx]) {
+        expIdx++;
+        if (expIdx === expertCode.length) {
+          document.body.classList.toggle('expert-mode');
+          
+          if (document.body.classList.contains('expert-mode')) {
+            playMatrixEffect();
+          }
+          expIdx = 0;
+        }
+      } else {
+        expIdx = 0;
+      }
+    });
+
     // ── Konami Code (Easter Egg) ──
     const konami = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
     let kIdx = 0;
@@ -2934,6 +3080,26 @@
           }, 800);
         } else {
           tapTimer = setTimeout(() => { tapCount = 0; }, 450);
+        }
+      }, { passive: true });
+    }
+
+    // Mobile Expert Mode Trigger (5 rapid taps on the Hero Title)
+    let expertTapCount = 0;
+    let expertTapTimer;
+    const heroTitleNode = document.querySelector('#t1 h1');
+    if (heroTitleNode) {
+      heroTitleNode.addEventListener('touchstart', (e) => {
+        expertTapCount++;
+        clearTimeout(expertTapTimer);
+        if (expertTapCount >= 5) {
+          expertTapCount = 0;
+          document.body.classList.toggle('expert-mode');
+          if (document.body.classList.contains('expert-mode')) {
+            playMatrixEffect();
+          }
+        } else {
+          expertTapTimer = setTimeout(() => { expertTapCount = 0; }, 450);
         }
       }, { passive: true });
     }
@@ -3202,7 +3368,7 @@
           trigger: hc, 
           start: 'top top', 
           end: 'bottom bottom', 
-          scrub: 1.5 
+          scrub: 1.2 // Slight decimal scrub for that iPhone glide/inertia when stopping
         },
         onUpdate: requestDraw
       });
@@ -3243,6 +3409,19 @@
         duration: d * 1.2, ease: 'power4.in', stagger: 0.03, force3D: true 
       }, 0.82);
       masterTL.to(t3, { opacity: 0, duration: d, ease: 'none' }, 0.9);
+
+      // Magnetic Speed Breaker at end of Hero
+      ScrollTrigger.create({
+        trigger: ".hero-mq",
+        start: "top bottom", // Trigger as soon as the marquee enters at bottom
+        end: "top top",      // Until it hits the top
+        snap: {
+          snapTo: 1,         // Magnetically pull/snap to the end of this boundary
+          duration: 0.6,
+          delay: 0.1,
+          ease: "power3.inOut"
+        }
+      });
 
       // INITIALIZE REVEALS: Hide elements immediately to prevent flash during scroll
       gsap.set('.rv, .rv2', { opacity: 0, y: 40 });
@@ -3340,7 +3519,7 @@
           });
           card.addEventListener('mouseleave', () => {
             gsap.to(card, { rotateX: 0, rotateY: 0, duration: 1.2, ease: 'expo.out', overwrite: 'auto' });
-          });
+           });
         });
       }
 
