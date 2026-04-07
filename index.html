@@ -19,8 +19,7 @@
   <meta property="og:image" content="images/og_image.webp">
 
   <!-- WEBSITE ICON (FAVICON) -->
-  <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23080808%22 rx=%2220%22/><text x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.35em%22 font-size=%2260%22 fill=%22%23c9a87c%22 font-family=%22'Cormorant Garamond', Georgia, serif%22 font-style=%22italic%22 font-weight=%22300%22 letter-spacing=%22-2%22>RP</text></svg>">
+  <link rel="icon" type="image/png" href="images/favicon-rp.png" sizes="128x128">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -840,6 +839,23 @@
       flex-direction: column;
       align-items: center;
       gap: .75rem;
+      pointer-events: auto;
+      cursor: none;
+      transition: transform 0.4s var(--ease-out), opacity 0.4s var(--ease-out);
+    }
+
+    #scue:hover {
+      transform: translateX(-50%) translateY(-6px);
+      opacity: 1 !important;
+    }
+
+    #scue:hover .sc-tx {
+      color: var(--paper);
+      letter-spacing: .5em;
+    }
+
+    #scue:hover .sc-l {
+      opacity: .9;
     }
 
     .sc-l {
@@ -847,6 +863,7 @@
       height: 56px;
       background: linear-gradient(to bottom, var(--paper), transparent);
       animation: sc 1.8s ease-in-out infinite;
+      transition: opacity 0.4s ease;
     }
 
     @keyframes sc {
@@ -869,6 +886,7 @@
       letter-spacing: .35em;
       text-transform: uppercase;
       color: var(--dim);
+      transition: color 0.4s ease, letter-spacing 0.4s var(--ease-out);
     }
 
     /* ── Content Wrapper ── */
@@ -2180,15 +2198,15 @@
     body.expert-mode {
       --ink: #010400; /* Deep absolute black */
       --paper: #ccebc4; /* Washed-out green/white for readable text */
+      /* Preserve fonts but emphasize tech aesthetic */
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Syne', system-ui, sans-serif;
       --accent: #00ff41; /* True terminal green */
       --accent2: #00f0ff; /* Cyber cyan */
       --dim: rgba(0, 255, 65, 0.4);
       --dimmer: rgba(0, 255, 65, 0.15);
       --rule: rgba(0, 255, 65, 0.3);
       --rule-mid: rgba(0, 255, 65, 0.6);
-      
-      --serif: var(--mono);
-      --sans: var(--mono);
     }
     
     body.expert-mode * {
@@ -2197,14 +2215,53 @@
     
     /* Glitch Typography for Headings */
     body.expert-mode h1, body.expert-mode h2, body.expert-mode h3, 
-    body.expert-mode .ct-serif, body.expert-mode .srv-name, 
-    body.expert-mode .wc-title {
-      font-style: normal !important;
-      letter-spacing: -0.05em !important;
-      text-transform: uppercase;
+    body.expert-mode .srv-name, body.expert-mode .wc-title {
+      font-style: inherit; /* Retain original style */
+      letter-spacing: -0.02em !important;
       color: var(--accent);
-      text-shadow: 2px 0 0 rgba(255,0,80,0.7), -2px 0 0 rgba(0,255,255,0.7);
-      animation: textGlitch 4s infinite linear alternate-reverse;
+      text-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+      animation: textPulse 4s infinite alternate;
+    }
+    
+    /* ── Refined Expert Mode Contact Header ── */
+    body.expert-mode .ct-big .ct-kicker {
+      font-family: var(--mono) !important;
+      font-size: 0.8rem !important;
+      letter-spacing: 0.6em !important;
+      color: var(--accent) !important;
+      opacity: 0.6;
+      text-transform: uppercase;
+    }
+
+    body.expert-mode .ct-big .ct-serif {
+      font-family: var(--serif) !important;
+      font-style: italic !important;
+      text-transform: lowercase !important;
+      color: var(--paper) !important; /* Light green/white */
+      text-shadow: 0 0 20px var(--accent);
+      animation: simpleGlitch 5s infinite;
+    }
+
+    body.expert-mode .ct-big .ct-outline {
+      font-family: var(--sans) !important;
+      font-weight: 800 !important;
+      -webkit-text-stroke: 1.5px var(--accent) !important;
+      color: transparent !important;
+      text-shadow: 0 0 10px rgba(0, 255, 65, 0.2) !important;
+      opacity: 0.9;
+    }
+
+    @keyframes textPulse {
+      0% { text-shadow: 0 0 10px rgba(0, 255, 65, 0.2); }
+      100% { text-shadow: 0 0 25px rgba(0, 255, 65, 0.5); }
+    }
+
+    @keyframes simpleGlitch {
+      0%, 95%, 100% { transform: none; opacity: 1; }
+      96% { transform: translate(-2px, 1px); opacity: 0.8; }
+      97% { transform: translate(2px, -1px); }
+      98% { transform: none; opacity: 0.6; }
+      99% { transform: translate(-1px, -1px); }
     }
     
     @keyframes textGlitch {
@@ -2878,9 +2935,16 @@
       syncTouch: isMobile,            // Sync touch events on mobile only
       gestureOrientation: 'vertical', // Explicit — prevent horizontal intercept
     });
+    
+    // ── Auto-scroll performance flag (shared with skew guard) ──
+    let isAutoScrolling = false;
+
     lenis.scrollTo(0, { immediate: true });
     lenis.stop();
     lenis.on('scroll', ScrollTrigger.update);
+    
+    // 120fps ticker
+    gsap.ticker.fps(120);
     gsap.ticker.add(t => lenis.raf(t * 1000));
     // 500ms lag smoothing prevents jank on low-end devices (0 = no smoothing = jank)
     gsap.ticker.lagSmoothing(500, 33);
@@ -3474,6 +3538,59 @@
       const t2 = document.getElementById('t2');
       const t3 = document.getElementById('t3');
       const sc = document.getElementById('scue');
+
+      // ── Scroll Cue Click → Smooth scroll to About ──
+      sc.addEventListener('click', () => {
+        const aboutSection = document.getElementById('about');
+        if (!aboutSection) return;
+
+        // Boost rendering for the duration of the programmatic scroll
+        isAutoScrolling = true;
+        gsap.ticker.fps(120);          // Request 120fps from browser
+        gsap.ticker.lagSmoothing(0);   // Zero tolerance — no frame slipping
+
+        lenis.scrollTo(aboutSection, {
+          duration: 6.2,
+          easing: (() => {
+            // Velocity-integral breathing easing — lookup table approach.
+            // Velocity = sin(pi*t) bell x Gaussian brakes at T2 (t~0.30) and T3 (t~0.68).
+            // C-infinity smooth — no kinks, no micro-stops anywhere.
+            const N = 1200;
+            const tbl = new Float32Array(N + 1);
+            const vel = new Float32Array(N + 1);
+            for (let i = 0; i <= N; i++) {
+              const t  = i / N;
+              const bv = Math.sin(Math.PI * t);
+              const d1 = (t - 0.30) / 0.068;
+              const d2 = (t - 0.68) / 0.068;
+              const g1 = Math.exp(-(d1 * d1));   // T2 brake (Gaussian)
+              const g2 = Math.exp(-(d2 * d2));   // T3 brake (Gaussian)
+              vel[i]   = bv * (1 - 0.74 * g1) * (1 - 0.74 * g2);
+            }
+            let total = 0;
+            for (let i = 0; i < N; i++) total += (vel[i] + vel[i + 1]) * 0.5 / N;
+            let sum = 0;
+            tbl[0] = 0;
+            for (let i = 1; i <= N; i++) {
+              sum   += (vel[i - 1] + vel[i]) * 0.5 / N;
+              tbl[i] = sum / total;
+            }
+            return (t) => {
+              const idx = t * N;
+              const i   = Math.min(N - 1, idx | 0);
+              return tbl[i] + (tbl[i + 1] - tbl[i]) * (idx - i);
+            };
+          })(),
+          lock: false,
+          force: true,
+          onComplete: () => {
+            isAutoScrolling = false;
+            gsap.ticker.fps(60);
+            gsap.ticker.lagSmoothing(500, 33);
+          }
+        });
+      });
+
       
       const t2Words = splitText(t2.querySelector('h2'));
       const t3Words = splitText(t3.querySelector('h2'));
@@ -3647,7 +3764,7 @@
           clamp = gsap.utils.clamp(-10, 10);
         ScrollTrigger.create({
           onUpdate: (self) => {
-            if (document.hidden) return;
+            if (document.hidden || isAutoScrolling) return; // Skip during auto-scroll — prevents tween spam
             let skew = clamp(self.getVelocity() / -300);
             if (Math.abs(skew) > Math.abs(proxy.skew)) {
               proxy.skew = skew;
