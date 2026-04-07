@@ -64,7 +64,7 @@ Deployment    Vercel
 
 ## ✦ Contact
 
-- 💬 WhatsApp: [+91 93434 38096](https://wa.me/919343438096)
+- 💬 Contact: [eMail](mailto:contact.rudrapra@gmail.com)
 - 🌐 Portfolio: [rudrapra.vercel.app](https://rudrapra.vercel.app)
 - 📍 Based in India · Available globally · Open to select projects
 
