@@ -71,7 +71,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [link](http://rudrapra.vercel.app) in your browser.
 
 > **Tip:** A large screen and headphones are recommended for full immersion.
 
