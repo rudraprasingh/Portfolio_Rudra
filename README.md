@@ -57,21 +57,6 @@ Deployment    Vercel
 
 ---
 
-## ✦ Getting Started
-
-```bash
-# Clone the repository
-git clone https://github.com/rudrapra/portfolio.git
-cd portfolio
-
-# Install dependencies
-npm install
-
-# Run locally
-npm run dev
-```
-
-Open [link](http://rudrapra.vercel.app) in your browser.
 
 > **Tip:** A large screen and headphones are recommended for full immersion.
 
