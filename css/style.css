@@ -1745,7 +1745,7 @@
       padding: 1.4rem 3.2rem;
       border-radius: 100px;
       text-decoration: none;
-      transition: background .4s var(--ease-out), transform .4s var(--ease-out), color .4s;
+      transition: background .4s var(--ease-out), color .4s;
       position: relative;
       overflow: hidden;
       border: 1px solid rgba(0,0,0,0.05);
@@ -1788,17 +1788,17 @@
     }
 
     .btn-p svg {
-      transition: transform 0.5s var(--ease-out);
+      transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+      will-change: transform;
     }
 
     .btn-p:hover {
       background: #fff;
-      transform: scale(1.04) translateY(-2px);
       color: #000;
     }
 
     .btn-p:hover svg {
-      transform: translateX(5px) rotate(-45deg) scale(1.2);
+      transform: translateX(8px) rotate(-45deg) scale(1.1);
     }
 
     .btn-p:hover::after {
@@ -1830,13 +1830,12 @@
       padding: 1.3rem 2.8rem;
       border-radius: 99px;
       text-decoration: none;
-      transition: border-color .3s, background-color .3s, transform .2s ease-out;
+      transition: border-color .3s, background-color .3s;
     }
 
     .btn-o:hover {
       border-color: var(--paper);
       background: rgba(237, 232, 224, .025);
-      transform: scale(1.05)
     }
 
     @media(max-width:480px) {
@@ -1924,7 +1923,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform .4s, opacity .4s;
+      transition: opacity .4s;
     }
 
     .music-btn:hover {
@@ -2287,4 +2286,3 @@
       0% { background-position: 0 0; }
       100% { background-position: 0 100vh; }
     }
-  </style>

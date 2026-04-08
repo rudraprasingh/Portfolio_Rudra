@@ -200,7 +200,11 @@
           duration: 0.35,
           ease: "power3.inOut",
           delay: 0.8,
-          onStart: () => { document.body.classList.toggle('expert-mode'); canvas.style.display = "none"; }
+          onStart: () => { 
+            document.body.classList.add('expert-mode'); 
+            if (window.toggleExpertAudio) window.toggleExpertAudio(true);
+            canvas.style.display = "none"; 
+          }
         });
         tl.to(bs, { scaleX: 0, opacity: 0, duration: 0.45, ease: "power4.in" });
 
@@ -240,7 +244,8 @@
         
         // Phase 3: Toggle theme hidden behind the mask
         tl.add(() => {
-          document.body.classList.toggle('expert-mode');
+          document.body.classList.remove('expert-mode');
+          if (window.toggleExpertAudio) window.toggleExpertAudio(false);
         });
 
         // Phase 4: Smoothly fade the mask away while columns are still present
@@ -360,7 +365,7 @@
 
     const canvas = document.getElementById('hero-canvas');
     const ctx = canvas.getContext('2d');
-    let FRAMES = 88, ok = 0, bad = 0;
+    let FRAMES = 98, ok = 0, bad = 0;
     const imgs = [];
     const loader = document.getElementById('loader');
     const lPct = document.getElementById('l-pct');
@@ -452,7 +457,7 @@
     }
 
     function loadHeroCanvas() {
-      const start = 16, end = 90, total = end - start + 1;
+      const start = 0, end = 97, total = end - start + 1;
       // Fallback: if frames don't load within 8s, show explore button anyway
       const fallbackTimer = setTimeout(() => {
         if (ok + bad < total && ok > 0) {
@@ -466,11 +471,7 @@
 
       for (let i = start; i <= end; i++) {
         const img = new Image();
-        let fIdx = i > 82 ? 82 : i; // Copy frame 82 for higher indices
-        if (fIdx === 18) fIdx = 17; // Patch missing frame 18
-        if (fIdx === 71) fIdx = 70; // Patch missing frame 71
-        
-        img.src = `sequence/frame_${fIdx.toString().padStart(2, '0')}_delay-0.066s.webp`;
+        img.src = `sequence/frame_${i.toString().padStart(2, '0')}_delay-0.041s.webp`;
         img.onload = () => { 
           ok++; 
           tick(total, fallbackTimer);
@@ -772,16 +773,24 @@
             const x = e.clientX - rect.left - rect.width / 2;
             const y = e.clientY - rect.top - rect.height / 2;
             const strength = el.id === 'bl' ? 0.4 : (el.closest('#nav') ? 0.32 : 0.42);
+            
+            // Integrate hover effects into magnetic transform to prevent conflicts
+            const isP = el.classList.contains('btn-p');
+            const isO = el.classList.contains('btn-o');
+            const hShift = (isP || isO) ? -3 : 0;
+            const hScale = isP ? 1.02 : (isO ? 1.05 : 1);
+
             gsap.to(el, { 
               x: x * strength, 
-              y: y * strength, 
+              y: (y * strength) + hShift, 
+              scale: hScale,
               duration: 0.6, 
               ease: 'power3.out',
-              overwrite: 'auto' // Prevent conflicting animations from causing flicker
+              overwrite: 'auto'
             });
           }, { passive: true });
           el.addEventListener('mouseleave', () => {
-            gsap.to(el, { x: 0, y: 0, duration: 0.8, ease: 'elastic.out(1.2,0.4)', overwrite: 'auto' });
+            gsap.to(el, { x: 0, y: 0, scale: 1, duration: 0.8, ease: 'elastic.out(1.2,0.4)', overwrite: 'auto' });
             rect = null;
           });
         });
