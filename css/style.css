@@ -264,10 +264,32 @@ body.nav-active #top-vignette { background: rgba(6, 6, 6, 0.9); }
 
 @media (max-width: 768px) {
   #bl {
-    top: 1.4rem;
+    /* Match hamburger: top: 1.3rem, same 48×48px touch target size */
+    top: 1.3rem;
     left: 1.5rem;
+    /* 48×48 hit area — mirrors hamburger's min-width/min-height */
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
+    /* Reset padding/margin offsets from desktop and re-center content */
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    /* Font size scaled so the text fills the 48px height naturally */
     font-size: 1.3rem;
+    line-height: 1;
     pointer-events: auto;
+  }
+
+  /* Re-anchor the absolute children to the new padding-free origin */
+  #bl #bl-hi,
+  #bl #bl-name {
+    position: relative;
+    top: auto;
+    left: auto;
   }
 }
 
